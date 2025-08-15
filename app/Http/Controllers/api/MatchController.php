@@ -54,4 +54,34 @@ class MatchController extends Controller
             'player_stats' => $match->playerStats()->with('player')->get()
         ]);
     }
+
+
+    public function getPlayersByTeam(FootballMatch $match, $teamId)
+    {
+        $players = $match->playerStats()
+            ->where('team_id', $teamId)
+            ->with('player:id,first_name,last_name,display_name')
+            ->get()
+            ->map(function ($stat) {
+                return [
+                    'player_id' => $stat->player->id,
+                    'name' => $stat->player->display_name ?? $stat->player->full_name,
+                ];
+            });
+
+        return response()->json($players);
+    }
+    public function getPlayerStatsById(FootballMatch $match, $playerId)
+    {
+        $playerStat = $match->playerStats()
+            ->where('player_id', $playerId)
+            ->with(['player', 'goalkeeperStats', 'defenderStats', 'attackerStats'])
+            ->first();
+
+        if (!$playerStat) {
+            return response()->json(['message' => 'Player not found for this match'], 404);
+        }
+
+        return response()->json($playerStat);
+    }
 }

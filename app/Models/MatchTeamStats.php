@@ -10,7 +10,7 @@ class MatchTeamStats extends Model
     use HasFactory;
 
     protected $fillable = [
-        'match_id',
+        'football_match_id',
         'club_id',
         'is_home',
         'passes_attempted',

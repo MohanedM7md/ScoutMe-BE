@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Contracts\PositionStats;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DefenderMatchStats extends Model
+class DefenderMatchStats extends Model implements PositionStats
 {
     use HasFactory;
     public $timestamps = false;
