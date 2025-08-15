@@ -19,7 +19,9 @@ class AdminMatchController extends Controller
             'home_team_id' => 'required|exists:clubs,id',
             'away_team_id' => 'required|exists:clubs,id',
             'match_date' => 'required|date',
-            // Add other match fields
+            'league_id' => 'nullable|exists:leagues,id',
+            'referee' => 'nullable|string|max:100',
+            'status' => 'required|in:scheduled,in_play,finished,postponed,canceled',
         ]);
 
         $match = FootballMatch::create($validated);
@@ -37,7 +39,9 @@ class AdminMatchController extends Controller
             'home_team_id' => 'sometimes|exists:clubs,id',
             'away_team_id' => 'sometimes|exists:clubs,id',
             'match_date' => 'sometimes|date',
-            // Add other match fields
+            'league_id' => 'nullable|exists:leagues,id',
+            'referee' => 'nullable|string|max:100',
+            'status' => 'required|in:scheduled,in_play,finished,postponed,canceled',
         ]);
 
         $match->update($validated);

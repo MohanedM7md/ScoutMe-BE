@@ -10,13 +10,29 @@ class MatchController extends Controller
 {
     public function index(Request $request)
     {
-        $matches = FootballMatch::with(['homeTeam', 'awayTeam', 'league'])
-            ->filter($request->only(['team', 'date', 'date_from', 'date_to']))
+        $query = FootballMatch::query();
+
+
+        $query->with(['homeTeam', 'awayTeam']);
+
+
+        if ($request->boolean('with_league')) {
+            $query->with('league');
+        }
+
+
+        if ($request->boolean('with_stats')) {
+            $query->with(['teamStats', 'playerStats.player']);
+        }
+
+        $matches = $query
+            ->filter($request->only(['team', 'league', 'date', 'date_from', 'date_to']))
             ->orderBy('match_date', 'desc')
             ->paginate($request->input('per_page', 10));
 
         return response()->json($matches);
     }
+
 
 
     public function show(FootballMatch $match)

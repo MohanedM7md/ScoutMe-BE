@@ -75,6 +75,15 @@ class FootballMatch extends Model
             });
         }
 
+        // Filter by league name
+        if (!empty($filters['league'])) {
+            $league = $filters['league'];
+
+            $query->whereHas('league', function ($q) use ($league) {
+                $q->where('name', 'like', "%{$league}%");
+            });
+        }
+
         // Filter by specific date
         if (!empty($filters['date'])) {
             $query->whereDate('match_date', $filters['date']);
