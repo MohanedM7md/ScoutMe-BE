@@ -15,6 +15,9 @@ use App\Models\FootballMatch;
 use App\Models\Player;
 use App\Models\League;
 use App\Models\PlayerMatchStats;
+use App\Models\AttackerMatchStats;
+use App\Models\DefenderMatchStats;
+use App\Models\GoalkeeperMatchStats;
 use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
@@ -35,6 +38,10 @@ class DatabaseSeeder extends Seeder
         League::truncate();
         FootballMatch::truncate();
         PlayerMatchStats::truncate();
+        // Truncate attacker, defender, and goal keeper stats tables
+        AttackerMatchStats::truncate();
+        DefenderMatchStats::truncate();
+        GoalkeeperMatchStats::truncate();
         Schema::enableForeignKeyConstraints();
         // Seed roles
         Role::create(['name' => 'admin', 'guard_name' => 'web']);

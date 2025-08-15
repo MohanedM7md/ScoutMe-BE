@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('attacker_match_stats', function (Blueprint $table) {
-            $table->id();
+            $table->id()->autoIncrement();
             $table->foreignId('player_match_stat_id')->constrained('player_match_stats')->onDelete('cascade');
 
             $table->unsignedTinyInteger('hit_woodwork')->default(0);

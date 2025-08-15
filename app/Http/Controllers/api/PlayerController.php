@@ -38,10 +38,28 @@ class PlayerController extends Controller
 
     public function search(Request $request)
     {
-        $players = Player::search($request->query('q'))
-            ->with(['nationalityCountry', 'primaryPosition'])
-            ->paginate(10);
+        $request->validate([
+            'query' => 'required|string|min:2',
+            'per_page' => 'sometimes|integer|min:1|max:100'
+        ]);
 
-        return response()->json($players);
+        $results = Player::search($request->input('query'))
+            ->query(function ($builder) {
+                $builder->with(['primaryPosition', 'nationalityCountry']);
+            })
+            ->paginate($request->input('per_page', 10));
+
+        return response()->json([
+            'results' => $results,
+            'suggestions' => $this->getSearchSuggestions($request->input('query'))
+        ]);
+    }
+
+    protected function getSearchSuggestions($query)
+    {
+        return Player::where('first_name', 'like', $query . '%')
+            ->orWhere('last_name', 'like', $query . '%')
+            ->take(5)
+            ->pluck('display_name');
     }
 }
