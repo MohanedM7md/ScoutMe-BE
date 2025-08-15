@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ScoutController;
+use App\Http\Controllers\Api\PlayerController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'role:scout'])->group(function () {
