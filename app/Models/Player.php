@@ -29,24 +29,7 @@ class Player extends Model
         'is_profile_complete' => 'boolean',
     ];
 
-    public function toSearchableArray()
-    {
-        return [
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'display_name' => $this->display_name,
-            'primary_position' => $this->primaryPosition->name ?? null,
-        ];
-    }
-    public function nationalityCountry(): BelongsTo
-    {
-        return $this->belongsTo(Country::class, 'nationality');
-    }
 
-    public function secondNationalityCountry(): BelongsTo
-    {
-        return $this->belongsTo(Country::class, 'second_nationality');
-    }
 
     public function primaryPosition(): BelongsTo
     {
@@ -66,5 +49,23 @@ class Player extends Model
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    /**
+     * Scope for filtering players based on request params
+     */
+    public function scopeFilter($query, array $filters)
+    {
+        if (!empty($filters['position'])) {
+            $query->where('primary_position', $filters['position']);
+        }
+
+        if (!empty($filters['name'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('first_name', 'like', '%' . $filters['name'] . '%')
+                    ->orWhere('last_name', 'like', '%' . $filters['name'] . '%')
+                    ->orWhere('display_name', 'like', '%' . $filters['name'] . '%');
+            });
+        }
     }
 }

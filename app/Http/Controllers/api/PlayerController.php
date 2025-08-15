@@ -11,7 +11,7 @@ class PlayerController extends Controller
     public function index(Request $request)
     {
         $players = Player::with('primaryPosition')
-            ->filter($request->all())
+            ->filter($request->only(['position', 'name']))
             ->paginate(15);
 
         return response()->json($players);
@@ -20,8 +20,6 @@ class PlayerController extends Controller
     public function show(Player $player)
     {
         return response()->json($player->load([
-            'nationalityCountry',
-            'secondNationalityCountry',
             'primaryPosition',
             'matchStats',
             'aggregatedStats'

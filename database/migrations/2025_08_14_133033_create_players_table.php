@@ -23,7 +23,14 @@ return new class extends Migration
             $table->unsignedSmallInteger('weight_kg')->nullable();
 
             // Position
-            $table->string('primary_position', 5)->constrained('positions');
+            $table->string('primary_position', 5);
+            $table
+                ->foreign('primary_position')
+                ->references('id')
+                ->on('positions')
+                ->onUpdate('cascade')
+                ->onDelete('restrict');
+
             $table->text('player_image')->nullable();
             $table->boolean('is_profile_complete')->default(false);
 

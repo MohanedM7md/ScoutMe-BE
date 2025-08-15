@@ -44,9 +44,9 @@ class DatabaseSeeder extends Seeder
         GoalkeeperMatchStats::truncate();
         Schema::enableForeignKeyConstraints();
         // Seed roles
-        Role::create(['name' => 'admin', 'guard_name' => 'web']);
-        Role::create(['name' => 'scout', 'guard_name' => 'web']);
-        Role::create(['name' => 'player', 'guard_name' => 'web']);
+        Role::create(['name' => 'admin']);
+        Role::create(['name' => 'scout']);
+        Role::create(['name' => 'player']);
 
         // Call other seeders
         $this->call([
