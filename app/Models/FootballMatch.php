@@ -52,7 +52,13 @@ class FootballMatch extends Model
         return $this->hasOne(MatchTeamStats::class)
             ->where('club_id', $this->away_team_id);
     }
-
+    public function league()
+    {
+        return $this->belongsTo(League::class)->withDefault([
+            'name' => 'Non-League Match',
+            'logo_url' => 'default/league_logo.png'
+        ]);
+    }
     public function scopeFilter($query, array $filters)
     {
         // Filter by team name
