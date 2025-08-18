@@ -10,6 +10,7 @@ class Club extends Model
     use HasFactory;
 
     protected $fillable = [
+        'player_match_stat_id',
         'name',
         'short_name',
         'country_code',

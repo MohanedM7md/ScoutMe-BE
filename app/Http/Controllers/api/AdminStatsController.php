@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\FootballMatch;
 use App\Models\MatchTeamStats;
 use App\Models\PlayerMatchStats;
-use App\Models\Player;
+use App\Models\GoalkeeperMatchStats;
+use App\Models\AttackerMatchStats;
+use App\Models\DefenderMatchStats;
 use App\Models\Position;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Contracts\PositionStats;
 
 class AdminStatsController extends Controller
 {
@@ -115,7 +117,7 @@ class AdminStatsController extends Controller
         $request->validate($this->commonTeamStatsRules);
         MatchTeamStats::updateOrCreate(
             [
-                'football_match_id' => $request->input('club_id'),
+                'football_match_id' => $request->input('football_match_id'),
                 'club_id' => $request->input('club_id'),
             ],
             $request->only(array_keys($this->commonTeamStatsRules))
@@ -129,36 +131,12 @@ class AdminStatsController extends Controller
     {
         // Get position-specific rules for each player
         $playerStat = $request->input('playerState');
-        $position = Position::find($playerStat['played_position'] ?? null);
-        $category = $position->category;
-
-        if (is_null($category)) {
-            return response()->json(['error' => 'Invalid position: category is missing.'], 422);
-        }
-
-        switch ($category) {
-            case 'Goalkeeper':
-                $rules = $this->goalkeeperSpecificRules;
-                break;
-            case 'Defender':
-                $rules = $this->defenderSpecificRules;
-                break;
-            case 'Forward':
-                $rules = $this->attackerSpecificRules;
-                break;
-            default:
-                $rules = [];
-                break;
-        }
-
-
-        $request->validate($rules);
+        $playerPostion = $request->input('postion_stat');
 
         $playerStat = PlayerMatchStats::updateOrCreate(
             $playerStat
         );
-
-
+        $this->updatePositionStats($playerPostion, $playerStat);
         return response()->json(['message' => 'Player stats updated successfully']);
     }
 
@@ -185,29 +163,28 @@ class AdminStatsController extends Controller
     /**
      * Update position-specific stats
      */
-    private function updatePositionStats(PlayerMatchStats $playerStat, array $data)
+    private function updatePositionStats($position, $playerStat)
     {
-        $position = Position::find($data['played_position'] ?? $playerStat->player->primary_position_id);
+        dump($playerStat);
+        $category = Position::find($playerStat['played_position'])?->category;
 
-        if (!$position) return;
-
-        $category = $position->category;
-
-        if ($category === 'Goalkeeper' && isset($data['goalkeeper_stats'])) {
-            $playerStat->goalkeeperStats()->updateOrCreate(
-                ['player_match_stat_id' => $playerStat->id],
-                $data['goalkeeper_stats']
-            );
-        } elseif ($category === 'Defender' && isset($data['defender_stats'])) {
-            $playerStat->defenderStats()->updateOrCreate(
-                ['player_match_stat_id' => $playerStat->id],
-                $data['defender_stats']
-            );
-        } elseif ($category === 'Forward' && isset($data['attacker_stats'])) {
-            $playerStat->attackerStats()->updateOrCreate(
-                ['player_match_stat_id' => $playerStat->id],
-                $data['attacker_stats']
-            );
+        dump($category);
+        if (is_null($category)) {
+            return response()->json(['error' => 'Invalid position: category is missing.'], 422);
+        }
+        $playerMatchStatId = is_array($playerStat) ? $playerStat['id'] : $playerStat->id;
+        switch ($category) {
+            case 'goalkeeper':
+                GoalkeeperMatchStats::updateOrCreate(["player_match_stat_id" =>  $playerMatchStatId], $position);
+                break;
+            case 'midfielder':
+                DefenderMatchStats::updateOrCreate(["player_match_stat_id" =>  $playerMatchStatId], $position);
+                break;
+            case 'attacker':
+                AttackerMatchStats::updateOrCreate(["player_match_stat_id" =>  $playerMatchStatId], $position);
+                break;
+            default:
+                break;
         }
     }
 }

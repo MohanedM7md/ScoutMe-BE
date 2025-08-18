@@ -12,6 +12,7 @@ class DefenderMatchStats extends Model implements PositionStats
     public $timestamps = false;
 
     protected $fillable = [
+        'player_match_stat_id',
         'blocks',
         'shot_blocks',
         'aerial_duels_won',

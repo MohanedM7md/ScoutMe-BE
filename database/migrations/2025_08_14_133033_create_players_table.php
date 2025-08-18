@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('display_name', 100)->nullable();
             $table->date('birth_date')->nullable();
             //deleted
-
+            $table->char('player_nationality', 2);
+            $table->foreign('player_nationality')->references('id')->on('countries')->onUpdate('cascade')->onDelete('restrict');
             // Physical Attributes
             $table->unsignedSmallInteger('height_cm')->nullable();
             $table->unsignedSmallInteger('weight_kg')->nullable();

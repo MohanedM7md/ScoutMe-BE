@@ -16,8 +16,8 @@ class MatchController extends Controller
         $query->with(['homeTeam', 'awayTeam']);
 
 
-        if ($request->boolean('with_league')) {
-            $query->with('league');
+        if ($request->boolean('with_competition')) {
+            $query->with('competition');
         }
 
 
@@ -25,8 +25,25 @@ class MatchController extends Controller
             $query->with(['teamStats', 'playerStats.player']);
         }
 
+        $filters = $request->only([
+            'team',
+            'competition',
+            'competition_type', // New filter
+            'date',
+            'date_from',
+            'date_to',
+            'year'
+        ]);
+
+        // Filter by competition type
+        if (!empty($filters['competition_type'])) {
+            $query->whereHas('competition', function ($q) use ($filters) {
+                $q->where('type', $filters['competition_type']);
+            });
+        }
+
         $matches = $query
-            ->filter($request->only(['team', 'league', 'date', 'date_from', 'date_to']))
+            ->filter($filters)
             ->orderBy('match_date', 'desc')
             ->paginate($request->input('per_page', 10));
 
@@ -40,7 +57,7 @@ class MatchController extends Controller
         return response()->json($match->load([
             'homeTeam',
             'awayTeam',
-            'league',
+            'competition',
             'teamStats',
             'playerStats.player'
         ]));

@@ -12,6 +12,7 @@ class GoalkeeperMatchStats extends Model implements PositionStats
     public $timestamps = false;
 
     protected $fillable = [
+        'player_match_stat_id',
         'saves_total',
         'saves_inside_box',
         'saves_outside_box',

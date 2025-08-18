@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class FootballMatch extends Model
 {
@@ -12,6 +13,7 @@ class FootballMatch extends Model
     protected $fillable = [
         'home_team_id',
         'away_team_id',
+        'competition_id',
         'match_date',
         'status',
         'referee',
@@ -52,10 +54,10 @@ class FootballMatch extends Model
         return $this->hasOne(MatchTeamStats::class)
             ->where('club_id', $this->away_team_id);
     }
-    public function league()
+    public function competition()
     {
-        return $this->belongsTo(League::class)->withDefault([
-            'name' => 'Non-League Match',
+        return $this->belongsTo(Competition::class)->withDefault([
+            'name' => 'Friendly Match',
             'logo_url' => 'default/league_logo.png'
         ]);
     }
@@ -76,11 +78,10 @@ class FootballMatch extends Model
         }
 
         // Filter by league name
-        if (!empty($filters['league'])) {
-            $league = $filters['league'];
-
-            $query->whereHas('league', function ($q) use ($league) {
-                $q->where('name', 'like', "%{$league}%");
+        if (!empty($filters['competition'])) {
+            $competition = $filters['competition'];
+            $query->whereHas('competition', function ($q) use ($competition) {
+                $q->where('name', 'like', "%{$competition}%");
             });
         }
 
@@ -91,7 +92,15 @@ class FootballMatch extends Model
 
         // Filter by date range
         if (!empty($filters['date_from']) && !empty($filters['date_to'])) {
-            $query->whereBetween('match_date', [$filters['date_from'], $filters['date_to']]);
+            $from = Carbon::parse($filters['date_from'])->startOfDay();
+            $to   = Carbon::parse($filters['date_to'])->endOfDay();
+            $query->whereBetween('match_date', [$from, $to]);
+        } elseif (!empty($filters['date_from'])) {
+            $from = Carbon::parse($filters['date_from'])->startOfDay();
+            $query->where('match_date', '>=', $from);
+        } elseif (!empty($filters['date_to'])) {
+            $to = Carbon::parse($filters['date_to'])->endOfDay();
+            $query->where('match_date', '<=', $to);
         }
     }
 }

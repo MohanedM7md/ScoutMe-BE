@@ -16,6 +16,7 @@ class Player extends Model
         'first_name',
         'last_name',
         'display_name',
+        'player_nationality',
         'birth_date',
         'height_cm',
         'weight_kg',
@@ -30,7 +31,10 @@ class Player extends Model
     ];
 
 
-
+    public function nationality(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'player_nationality', 'id');
+    }
     public function primaryPosition(): BelongsTo
     {
         return $this->belongsTo(Position::class, 'primary_position');
@@ -66,6 +70,9 @@ class Player extends Model
                     ->orWhere('last_name', 'like', '%' . $filters['name'] . '%')
                     ->orWhere('display_name', 'like', '%' . $filters['name'] . '%');
             });
+        }
+        if (!empty($filters['nationality'])) {
+            $query->where('player_nationality', $filters['nationality']);
         }
     }
 }

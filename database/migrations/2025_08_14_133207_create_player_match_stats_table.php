@@ -17,7 +17,6 @@ return new class extends Migration
             // Add foreign key explicitly
             $table->foreign('played_position')->references('id')->on('positions')->onUpdate('cascade')->onDelete('restrict');
 
-
             // Playing time
             $table->unsignedSmallInteger('minutes_played')->default(0);
             $table->boolean('starts')->default(false);
@@ -31,6 +30,10 @@ return new class extends Migration
             $table->unsignedTinyInteger('goals')->default(0);
             $table->unsignedTinyInteger('assists')->default(0);
 
+            // Crossing
+            $table->unsignedSmallInteger('crosses_attempted')->default(0);
+            $table->unsignedSmallInteger('crosses_completed')->default(0);
+            $table->decimal('cross_accuracy', 5, 2)->default(0.00);
             // Shooting
             $table->unsignedTinyInteger('shots_total')->default(0);
             $table->unsignedTinyInteger('shots_on_target')->default(0);

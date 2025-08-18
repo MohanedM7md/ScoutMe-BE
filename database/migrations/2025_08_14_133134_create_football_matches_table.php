@@ -12,14 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('home_team_id')->constrained('clubs');
             $table->foreignId('away_team_id')->constrained('clubs');
+            $table->foreignId('competition_id')->constrained('competitions');
             $table->timestamp('match_date');
             $table->string('status', 20); // 'scheduled', 'in_play', 'finished', 'postponed', 'canceled'
             $table->string('referee', 100)->nullable();
             $table->timestamps();
-            $table->foreignId('league_id')
-                ->nullable()
-                ->constrained('leagues')
-                ->nullOnDelete(); // Preserve match if league is deleted
             // Indexes
             $table->index('match_date');
             $table->index(['home_team_id', 'away_team_id', 'match_date']);

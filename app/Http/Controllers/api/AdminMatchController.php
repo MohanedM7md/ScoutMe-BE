@@ -19,7 +19,7 @@ class AdminMatchController extends Controller
             'home_team_id' => 'required|exists:clubs,id',
             'away_team_id' => 'required|exists:clubs,id',
             'match_date' => 'required|date',
-            'league_id' => 'nullable|exists:leagues,id',
+            'competition_id' => 'nullable|exists:competitions,id',
             'referee' => 'nullable|string|max:100',
             'status' => 'required|in:scheduled,in_play,finished,postponed,canceled',
         ]);
@@ -39,7 +39,7 @@ class AdminMatchController extends Controller
             'home_team_id' => 'sometimes|exists:clubs,id',
             'away_team_id' => 'sometimes|exists:clubs,id',
             'match_date' => 'sometimes|date',
-            'league_id' => 'nullable|exists:leagues,id',
+            'competition_id' => 'nullable|exists:competitions,id',
             'referee' => 'nullable|string|max:100',
             'status' => 'required|in:scheduled,in_play,finished,postponed,canceled',
         ]);
