@@ -13,6 +13,7 @@ class Player extends Model
     use HasFactory, Searchable;
 
     protected $fillable = [
+        'team_id',
         'first_name',
         'last_name',
         'display_name',
@@ -40,9 +41,13 @@ class Player extends Model
         return $this->belongsTo(Position::class, 'primary_position');
     }
 
-    public function matchStats(): HasMany
+    public function team()
     {
-        return $this->hasMany(PlayerMatchStats::class);
+        return $this->belongsTo(Club::class, 'team_id');
+    }
+    public function playerMatchStats(): HasMany
+    {
+        return $this->hasMany(PlayerMatchStats::class, 'player_id', 'id');
     }
 
     public function aggregatedStats(): HasMany
@@ -53,6 +58,10 @@ class Player extends Model
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+    public function player()
+    {
+        return $this->belongsToMany(Player::class, 'player_match_stats', 'football_match_id', 'player_id')->distinct();
     }
 
     /**

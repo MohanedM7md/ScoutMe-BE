@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Player;
-use App\Models\Country;
-use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 

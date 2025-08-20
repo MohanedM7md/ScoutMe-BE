@@ -2,8 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\JuniorPlayerController;
+use App\Http\Controllers\api\ScoutController;
 
-Route::post('/scout/register', [AuthController::class, 'scoutRegister']);
+
+Route::post('/register/scout', [ScoutController::class, 'register']);
+Route::post('/register/player', [JuniorPlayerController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {

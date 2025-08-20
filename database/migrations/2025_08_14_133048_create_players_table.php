@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('players', function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('team_id')->constrained('clubs');
             // Personal Info
             $table->string('first_name', 100);
             $table->string('last_name', 100);

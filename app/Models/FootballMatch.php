@@ -13,6 +13,7 @@ class FootballMatch extends Model
     protected $fillable = [
         'home_team_id',
         'away_team_id',
+        'season_id',
         'competition_id',
         'match_date',
         'status',
@@ -42,6 +43,10 @@ class FootballMatch extends Model
     {
         return $this->hasMany(PlayerMatchStats::class);
     }
+    public function season()
+    {
+        return $this->belongsTo(Season::class);
+    }
 
     public function homeTeamStats()
     {
@@ -61,6 +66,25 @@ class FootballMatch extends Model
             'logo_url' => 'default/league_logo.png'
         ]);
     }
+    public function players()
+    {
+        return $this->hasManyThrough(
+            Player::class,
+            PlayerMatchStats::class,
+            'football_match_id',
+            'id',
+            'id',
+            'player_id'
+        )->distinct();
+    }
+    public function getTeamPlayers(int $teamId)
+    {
+        return $this->players()
+            ->where('team_id', $teamId)
+            ->with('player:id,first_name,last_name,display_name')
+            ->get();
+    }
+
     public function scopeFilter($query, array $filters)
     {
         // Filter by team name

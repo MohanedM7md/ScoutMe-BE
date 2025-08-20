@@ -1,77 +1,71 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-use App\Models\Scout;
+use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function scoutRegister(Request $request)
-    {
-        $validated = $request->validate([
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
-            'name' => 'required_if:user_role,scout|string|max:100',
-            // Scout-specific fields
-            'phone' => 'nullable|string|max:20',
-            'logo_url' => 'nullable|string|required_if:scout_type,club',
-        ]);
-
-        // Create user
-        $user = User::create([
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'user_role' => 'scout'
-        ]);
-
-        // Assign role
-        $user->assignRole('scout');
-        $scoutData = [
-            'user_id' => $user->id,
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
-        ];
-
-        Scout::create($scoutData);
-
-
-        return response()->json([
-            'token' => $user->createToken('auth_token')->plainTextToken,
-            'user' => $user->load('scout') // Include scout data in response
-        ], 201);
-    }
-
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        // Find user
+        $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        // Revoke old tokens (optional)
+        $user->tokens()->delete();
+
+        // Create new token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Load related profile (player or scout)
+        $profile = null;
+        if ($user->role === 'player') {
+            $profile = $user->player;
+        } elseif ($user->role === 'scout') {
+            $profile = $user->scout;
         }
 
         return response()->json([
-            'token' => $user->createToken('auth_token')->plainTextToken,
-            'user' => $user
+            'token'   => $token,
+            'user'    => $user,
+            'profile' => $profile,
         ]);
     }
 
+
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->tokens()->delete();
 
         return response()->json(['message' => 'Logged out successfully']);
+    }
+    public function me(Request $request)
+    {
+        $user = $request->user();
+
+        $profile = null;
+        if ($user->role === 'player') {
+            $profile = $user->player;
+        } elseif ($user->role === 'scout') {
+            $profile = $user->scout;
+        }
+
+        return response()->json([
+            'user'    => $user,
+            'profile' => $profile,
+        ]);
     }
 }

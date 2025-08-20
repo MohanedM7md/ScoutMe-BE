@@ -23,6 +23,14 @@ return new class extends Migration
             $table->text('logo_url')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('competition_season', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('competition_id')->constrained();
+            $table->foreignId('season_id')->constrained();
+            $table->timestamps();
+            $table->unique(['competition_id', 'season_id']);
+        });
     }
 
     public function down()

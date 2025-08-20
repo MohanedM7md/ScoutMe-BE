@@ -15,7 +15,6 @@ class MatchController extends Controller
 
         $query->with(['homeTeam', 'awayTeam']);
 
-
         if ($request->boolean('with_competition')) {
             $query->with('competition');
         }
@@ -28,19 +27,12 @@ class MatchController extends Controller
         $filters = $request->only([
             'team',
             'competition',
-            'competition_type', // New filter
+            'competition_type',
             'date',
             'date_from',
             'date_to',
             'year'
         ]);
-
-        // Filter by competition type
-        if (!empty($filters['competition_type'])) {
-            $query->whereHas('competition', function ($q) use ($filters) {
-                $q->where('type', $filters['competition_type']);
-            });
-        }
 
         $matches = $query
             ->filter($filters)
@@ -58,8 +50,6 @@ class MatchController extends Controller
             'homeTeam',
             'awayTeam',
             'competition',
-            'teamStats',
-            'playerStats.player'
         ]));
     }
 
@@ -68,37 +58,33 @@ class MatchController extends Controller
         return response()->json([
             'home_team_stats' => $match->homeTeamStats,
             'away_team_stats' => $match->awayTeamStats,
-            'player_stats' => $match->playerStats()->with('player')->get()
+            'home_players' => $match->getTeamPlayers($match->home_team_id),
+            'away_players' => $match->getTeamPlayers($match->away_team_id),
         ]);
     }
 
 
     public function getPlayersByTeam(FootballMatch $match, $teamId)
     {
-        $players = $match->playerStats()
-            ->where('team_id', $teamId)
-            ->with('player:id,first_name,last_name,display_name')
-            ->get()
-            ->map(function ($stat) {
-                return [
-                    'player_id' => $stat->player->id,
-                    'name' => $stat->player->display_name ?? $stat->player->full_name,
-                ];
-            });
-
+        $players = $match->getTeamPlayers($teamId);
         return response()->json($players);
     }
+
     public function getPlayerStatsById(FootballMatch $match, $playerId)
     {
         $playerStat = $match->playerStats()
             ->where('player_id', $playerId)
-            ->with(['player', 'goalkeeperStats', 'defenderStats', 'attackerStats'])
+            ->with(['player', 'position'])
             ->first();
 
         if (!$playerStat) {
             return response()->json(['message' => 'Player not found for this match'], 404);
         }
 
-        return response()->json($playerStat);
+        return response()->json([
+            'player' => $playerStat->player,
+            'position' => $playerStat->position,
+            'stats' => $playerStat->all_stats
+        ]);
     }
 }

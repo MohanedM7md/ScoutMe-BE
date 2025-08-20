@@ -14,10 +14,9 @@ use App\Models\Club;
 use App\Models\FootballMatch;
 use App\Models\Player;
 use App\Models\PlayerMatchStats;
-use App\Models\AttackerMatchStats;
-use App\Models\DefenderMatchStats;
 use App\Models\GoalkeeperMatchStats;
 use App\Models\Competition;
+use App\Models\Season;
 use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
@@ -35,12 +34,12 @@ class DatabaseSeeder extends Seeder
         Scout::truncate();
         Club::truncate();
         Player::truncate();
-
+        Season::truncate();
         FootballMatch::truncate();
         PlayerMatchStats::truncate();
         // Truncate attacker, defender, and goal keeper stats tables
-        AttackerMatchStats::truncate();
-        DefenderMatchStats::truncate();
+
+
         GoalkeeperMatchStats::truncate();
         Competition::truncate();
         Schema::enableForeignKeyConstraints();
@@ -51,11 +50,11 @@ class DatabaseSeeder extends Seeder
 
         // Call other seeders
         $this->call([
+            SeasonsSeeder::class,
             CountriesSeeder::class,
             PositionsSeeder::class,
             SubscriptionPlansSeeder::class,
             UsersSeeder::class,
-            ScoutsSeeder::class,
             ClubsSeeder::class,
             PlayersSeeder::class,
             CompetitionSeeder::class,

@@ -12,8 +12,6 @@ class Scout extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'email',
-        'phone',
         'logo_url',
         'notes',
     ];

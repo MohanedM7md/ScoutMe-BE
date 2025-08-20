@@ -23,35 +23,28 @@ class Club extends Model
         'is_verified' => 'boolean',
     ];
 
-    public function country(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function country()
     {
         return $this->belongsTo(Country::class, 'country_code', 'iso_code_3');
     }
 
-    public function homeMatches(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function homeMatches()
     {
         return $this->hasMany(FootballMatch::class, 'home_team_id');
     }
 
-    public function awayMatches(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function awayMatches()
     {
         return $this->hasMany(FootballMatch::class, 'away_team_id');
     }
 
-    public function teamStats(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function teamStats()
     {
         return $this->hasMany(MatchTeamStats::class, 'club_id');
     }
 
-    public function players(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function players()
     {
-        return $this->hasManyThrough(
-            Player::class,
-            PlayerMatchStats::class,
-            'team_id',
-            'id',
-            'id',
-            'player_id'
-        )->distinct();
+        return $this->hasMany(Player::class, 'team_id');
     }
 }

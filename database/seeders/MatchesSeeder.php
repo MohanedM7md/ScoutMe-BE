@@ -5,13 +5,16 @@ namespace Database\Seeders;
 use App\Models\Club;
 use App\Models\Competition;
 use App\Models\FootballMatch;
+use App\Models\Season;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class MatchesSeeder extends Seeder
 {
+
     public function run()
     {
+        $season = Season::all();
         $competitions = Competition::all();
         $clubs = Club::all()->shuffle();
 
@@ -26,6 +29,7 @@ class MatchesSeeder extends Seeder
             FootballMatch::create([
                 'home_team_id' => $homeTeam->id,
                 'away_team_id' => $awayTeam->id,
+                'season_id' => $season->random()->id,
                 'competition_id' => $competitions->random()->id,
                 'match_date' => $matchDate,
                 'status' => 'completed',
@@ -44,6 +48,7 @@ class MatchesSeeder extends Seeder
                 'home_team_id' => $homeTeam->id,
                 'away_team_id' => $awayTeam->id,
                 'competition_id' => $competitions->random()->id,
+                'season_id' => $season->random()->id,
                 'match_date' => $matchDate,
                 'status' => 'scheduled',
                 'referee' => 'Referee ' . ($i + 21)

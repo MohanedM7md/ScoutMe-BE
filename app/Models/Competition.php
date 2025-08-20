@@ -32,7 +32,11 @@ class Competition extends Model
         return $this->belongsTo(Country::class, 'country_code', 'id');
     }
 
-
+    public function seasons()
+    {
+        return $this->belongsToMany(Season::class, 'competition_season')
+            ->withTimestamps();
+    }
     public function scopeForGender($query, $gender)
     {
         return $query->where('gender', $gender);
@@ -62,28 +66,14 @@ class Competition extends Model
 
     public function scopeFilter($query, array $filters)
     {
-
-        if (!empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
-        }
-
-
-        if (!empty($filters['type'])) {
-            $query->where('type', $filters['type']);
-        }
-
-
+        // Filter by country
         if (!empty($filters['country_code'])) {
             $query->where('country_code', $filters['country_code']);
         }
 
-
-        if (!empty($filters['gender'])) {
-            $query->where('gender', $filters['gender']);
-        }
-
-        if (!empty($filters['age_group'])) {
-            $query->where('age_group', $filters['age_group']);
+        // Filter by type (league, cup, etc.)
+        if (!empty($filters['type'])) {
+            $query->where('type', $filters['type']);
         }
     }
 }
