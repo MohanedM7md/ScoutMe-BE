@@ -3,23 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FootballMatchResource;
+use App\Http\Resources\FootballMatchCollection;
 use App\Models\FootballMatch;
 use Illuminate\Http\Request;
 
 class MatchController extends Controller
 {
+
     public function index(Request $request)
     {
         $query = FootballMatch::query();
-
 
         $query->with(['homeTeam', 'awayTeam']);
 
         if ($request->boolean('with_competition')) {
             $query->with('competition');
         }
-
-
+        if ($request->boolean('with_season')) {
+            $query->with('season');
+        }
         if ($request->boolean('with_stats')) {
             $query->with(['teamStats', 'playerStats.player']);
         }
@@ -28,6 +31,8 @@ class MatchController extends Controller
             'team',
             'competition',
             'competition_type',
+            'season',
+            'season_id',
             'date',
             'date_from',
             'date_to',
@@ -39,27 +44,25 @@ class MatchController extends Controller
             ->orderBy('match_date', 'desc')
             ->paginate($request->input('per_page', 10));
 
-        return response()->json($matches);
+        return new FootballMatchCollection($matches);
     }
-
 
 
     public function show(FootballMatch $match)
     {
-        return response()->json($match->load([
-            'homeTeam',
-            'awayTeam',
-            'competition',
-        ]));
+        $match->load(['homeTeam', 'awayTeam', 'competition']);
+
+        return new FootballMatchResource($match);
     }
+
 
     public function getMatchStats(FootballMatch $match)
     {
         return response()->json([
             'home_team_stats' => $match->homeTeamStats,
             'away_team_stats' => $match->awayTeamStats,
-            'home_players' => $match->getTeamPlayers($match->home_team_id),
-            'away_players' => $match->getTeamPlayers($match->away_team_id),
+            'home_players'    => $match->getTeamPlayers($match->home_team_id),
+            'away_players'    => $match->getTeamPlayers($match->away_team_id),
         ]);
     }
 
@@ -67,8 +70,10 @@ class MatchController extends Controller
     public function getPlayersByTeam(FootballMatch $match, $teamId)
     {
         $players = $match->getTeamPlayers($teamId);
+
         return response()->json($players);
     }
+
 
     public function getPlayerStatsById(FootballMatch $match, $playerId)
     {
@@ -78,13 +83,15 @@ class MatchController extends Controller
             ->first();
 
         if (!$playerStat) {
-            return response()->json(['message' => 'Player not found for this match'], 404);
+            return response()->json([
+                'message' => 'Player not found for this match'
+            ], 404);
         }
 
         return response()->json([
-            'player' => $playerStat->player,
+            'player'   => $playerStat->player,
             'position' => $playerStat->position,
-            'stats' => $playerStat->all_stats
+            'stats'    => $playerStat->all_stats,
         ]);
     }
 }

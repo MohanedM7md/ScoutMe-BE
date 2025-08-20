@@ -90,22 +90,33 @@ class FootballMatch extends Model
         // Filter by team name
         if (!empty($filters['team'])) {
             $team = $filters['team'];
-
             $query->where(function ($q) use ($team) {
                 $q->whereHas('homeTeam', function ($q2) use ($team) {
                     $q2->where('name', 'like', "%{$team}%");
-                })
-                    ->orWhereHas('awayTeam', function ($q2) use ($team) {
-                        $q2->where('name', 'like', "%{$team}%");
-                    });
+                })->orWhereHas('awayTeam', function ($q2) use ($team) {
+                    $q2->where('name', 'like', "%{$team}%");
+                });
             });
         }
 
-        // Filter by league name
+        // Filter by competition name
         if (!empty($filters['competition'])) {
             $competition = $filters['competition'];
             $query->whereHas('competition', function ($q) use ($competition) {
                 $q->where('name', 'like', "%{$competition}%");
+            });
+        }
+
+        // 🔥 Filter by season_id
+        if (!empty($filters['season_id'])) {
+            $query->where('season_id', $filters['season_id']);
+        }
+
+        // 🔥 Filter by season name (e.g., "2023/24")
+        if (!empty($filters['season'])) {
+            $season = $filters['season'];
+            $query->whereHas('season', function ($q) use ($season) {
+                $q->where('name', 'like', "%{$season}%");
             });
         }
 

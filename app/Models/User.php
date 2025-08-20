@@ -45,9 +45,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Scout::class);
     }
 
-    // Add this method for Cashier to use email as customer identifier
     public function stripeEmail()
     {
         return $this->email;
+    }
+
+    public function player()
+    {
+        return $this->hasOne(Player::class);
     }
 }
