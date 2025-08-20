@@ -79,15 +79,16 @@ class FootballMatch extends Model
     }
     public function getTeamPlayers(int $teamId)
     {
-        return $this->players()
+        $players =  $this->players()
             ->where('team_id', $teamId)
-            ->with('player:id,first_name,last_name,display_name')
+            ->select('player_id', 'first_name', 'last_name', 'display_name')
             ->get();
+
+        return $players;
     }
 
     public function scopeFilter($query, array $filters)
     {
-        // Filter by team name
         if (!empty($filters['team'])) {
             $team = $filters['team'];
             $query->where(function ($q) use ($team) {
@@ -99,33 +100,24 @@ class FootballMatch extends Model
             });
         }
 
-        // Filter by competition name
         if (!empty($filters['competition'])) {
             $competition = $filters['competition'];
             $query->whereHas('competition', function ($q) use ($competition) {
                 $q->where('name', 'like', "%{$competition}%");
             });
         }
-
-        // 🔥 Filter by season_id
         if (!empty($filters['season_id'])) {
             $query->where('season_id', $filters['season_id']);
         }
-
-        // 🔥 Filter by season name (e.g., "2023/24")
         if (!empty($filters['season'])) {
             $season = $filters['season'];
             $query->whereHas('season', function ($q) use ($season) {
                 $q->where('name', 'like', "%{$season}%");
             });
         }
-
-        // Filter by specific date
         if (!empty($filters['date'])) {
             $query->whereDate('match_date', $filters['date']);
         }
-
-        // Filter by date range
         if (!empty($filters['date_from']) && !empty($filters['date_to'])) {
             $from = Carbon::parse($filters['date_from'])->startOfDay();
             $to   = Carbon::parse($filters['date_to'])->endOfDay();

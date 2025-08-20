@@ -13,45 +13,6 @@ use Illuminate\Http\Request;
 class MatchController extends Controller
 {
 
-    public function index(Request $request)
-    {
-        $query = FootballMatch::with(['homeTeam', 'awayTeam', 'competition']);
-
-        // Optional filters
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('competition_id')) {
-            $query->where('competition_id', $request->competition_id);
-        }
-
-        if ($request->has('team_id')) {
-            $teamId = $request->team_id;
-            $query->where(function ($q) use ($teamId) {
-                $q->where('home_team_id', $teamId)
-                    ->orWhere('away_team_id', $teamId);
-            });
-        }
-
-        if ($request->has('date_from')) {
-            $query->where('match_date', '>=', $request->date_from);
-        }
-
-        if ($request->has('date_to')) {
-            $query->where('match_date', '<=', $request->date_to);
-        }
-
-        // Sort by match date
-        $query->orderBy('match_date', 'desc');
-
-        $matches = $query->paginate($request->get('per_page', 15));
-
-        // Use collection resource for list view
-        return new FootballMatchCollection($matches);
-    }
-
-
     public function store(StoreFootballMatchRequest $request)
     {
         $match = FootballMatch::create($request->validated());

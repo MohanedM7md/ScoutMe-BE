@@ -36,14 +36,6 @@ class PlayerController extends Controller
         );
     }
 
-    public function getStats(Player $player)
-    {
-        return response()->json([
-            'career_stats' => $player->aggregatedStats()->where('stat_type', 'career')->first(),
-            'season_stats' => $player->aggregatedStats()->where('stat_type', 'season')->first(),
-        ]);
-    }
-
 
     public function search(SearchPlayerRequest $request)
     {
