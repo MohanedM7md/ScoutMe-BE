@@ -50,8 +50,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->email;
     }
 
-    public function player()
+    public function JuniorPlayer()
     {
-        return $this->hasOne(Player::class);
+        return $this->hasOne(JuniorPlayer::class);
     }
 }

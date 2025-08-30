@@ -17,9 +17,7 @@ class UserResource extends JsonResource
             'created_at'  => $this->created_at,
             'updated_at'  => $this->updated_at,
 
-            // Load related data depending on role
-            'scout'  => $this->whenLoaded('scout'),
-            'player' => $this->whenLoaded('player'),
+            'profile' => $this->whenLoaded('player') ?? $this->whenLoaded('scout')
         ];
     }
 }

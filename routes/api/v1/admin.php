@@ -19,12 +19,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     Route::apiResource('seasons', SeasonController::class);
 
-    // Team stats
     Route::post('team-stat', [StatsController::class, 'storeTeamStats']);
     Route::put('team-stat/{match}/{clubId}', [StatsController::class, 'updateTeamStats']);
     Route::delete('team-stat/{match}/{clubId}', [StatsController::class, 'deleteTeamStats']);
 
-    // Player stats
     Route::post('player-stat', [StatsController::class, 'storePlayerStats']);
     Route::put('player-stat/{match}/{playerId}', [StatsController::class, 'updatePlayerStats']);
     Route::delete('player-stat/{match}/{playerId}', [StatsController::class, 'deletePlayerStats']);

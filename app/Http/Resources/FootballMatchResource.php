@@ -20,12 +20,10 @@ class FootballMatchResource extends JsonResource
             'created_at'     => $this->created_at,
             'updated_at'     => $this->updated_at,
 
-            // Related data (only loaded when present)
             'home_team'    => $this->whenLoaded('homeTeam'),
             'away_team'    => $this->whenLoaded('awayTeam'),
             'competition'  => $this->whenLoaded('competition'),
 
-            // Additional computed fields
             'is_live'      => $this->status === 'in_play',
             'is_upcoming'  => $this->status === 'scheduled' && $this->match_date > now(),
         ];
