@@ -34,7 +34,7 @@ class Player extends Model
 
     public function nationality(): BelongsTo
     {
-        return $this->belongsTo(Country::class, 'player_nationality', 'id');
+        return $this->belongsTo(Country::class, 'player_nationality');
     }
     public function primaryPosition(): BelongsTo
     {
@@ -50,23 +50,12 @@ class Player extends Model
         return $this->hasMany(PlayerMatchStats::class, 'player_id', 'id');
     }
 
-    public function aggregatedStats(): HasMany
-    {
-        return $this->hasMany(PlayerAggregatedStats::class);
-    }
 
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
     }
-    public function player()
-    {
-        return $this->belongsToMany(Player::class, 'player_match_stats', 'football_match_id', 'player_id')->distinct();
-    }
 
-    /**
-     * Scope for filtering players based on request params
-     */
     public function scopeFilter($query, array $filters)
     {
         if (!empty($filters['position'])) {

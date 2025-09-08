@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFootballMatchRequest;
 use App\Http\Requests\UpdateFootballMatchRequest;
 use App\Http\Resources\FootballMatchResource;
-use App\Http\Resources\FootballMatchCollection;
 use App\Models\FootballMatch;
 use Illuminate\Http\Request;
 

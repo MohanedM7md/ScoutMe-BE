@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100)->nullable(false);
             $table->string('short_name', 50)->nullable();
-            $table->enum('type', ['league', 'friendly', 'tournament'])->nullable(false);
+            $table->enum('type', ['league', 'friendly', 'cup'])->nullable(false);
             $table->char('country_code', 2)->nullable();
             $table->foreign('country_code')
                 ->references('id')

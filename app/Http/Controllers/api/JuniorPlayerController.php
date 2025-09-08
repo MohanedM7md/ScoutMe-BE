@@ -9,6 +9,7 @@ use App\Http\Resources\JuniorPlayerResource;
 use App\Models\JuniorPlayer;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class JuniorPlayerController extends Controller
 {
@@ -19,6 +20,7 @@ class JuniorPlayerController extends Controller
         $user = User::create([
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
+            'phone_number' => $request->phone,
             'user_role' => 'player',
         ]);
         $user->assignRole('player');
@@ -46,16 +48,55 @@ class JuniorPlayerController extends Controller
         ], 201);
     }
 
-
-    public function updateProfile(UpdateJuniorPlayerRequest $request, $playerId)
+    public function fetchProfile(Request $request)
     {
-        $player = User::findOrFail($playerId)->JuniorPlayer;
+        $user = $request->user();
+        $player = $user->juniorPlayer;
 
+        if (!$player) {
+            return response()->json([
+                'message' => 'Player profile not found'
+            ], 404);
+        }
+
+        return response()->json(
+            $player
+        );
+    }
+    public function updateProfile(UpdateJuniorPlayerRequest $request)
+    {
+        $user = $request->user();
+        $player = $user->JuniorPlayer;
+        if (!$player) {
+            return response()->json([
+                'message' => 'Player profile not found'
+            ], 404);
+        }
         $player->update($request->validated());
 
         return response()->json([
             'message' => 'Player profile updated successfully',
             'player' => $player
+        ]);
+    }
+
+    public function deleteProfile(Request $request)
+    {
+        $user = $request->user();               // authenticated user
+        $player = $user->juniorPlayer;          // get related player
+
+        if (!$player) {
+            return response()->json([
+                'message' => 'Player profile not found'
+            ], 404);
+        }
+
+        $player->delete();
+        $user->delete();
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Player profile deleted successfully'
         ]);
     }
 }

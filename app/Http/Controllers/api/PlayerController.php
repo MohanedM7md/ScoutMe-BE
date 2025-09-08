@@ -20,7 +20,7 @@ class PlayerController extends Controller
             ->orderBy('last_name')
             ->paginate($perPage, ['*'], 'page', $page);
 
-        return PlayerResource::collection($players);
+        return PlayerResource::collection($players->load('nationality'));
     }
 
     public function show(Player $player)
@@ -28,10 +28,7 @@ class PlayerController extends Controller
         return new PlayerResource(
             $player->load([
                 'primaryPosition',
-                'matchStats',
-                'aggregatedStats',
-                'nationalityCountry',
-                'secondNationalityCountry'
+                'nationality',
             ])
         );
     }

@@ -17,6 +17,7 @@ use App\Models\PlayerMatchStats;
 use App\Models\GoalkeeperMatchStats;
 use App\Models\Competition;
 use App\Models\Season;
+use App\Models\JuniorPlayer;
 use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
         Country::truncate();
         Position::truncate();
         SubscriptionPlan::truncate();
+        JuniorPlayer::truncate();
         User::truncate();
         Scout::truncate();
         Club::truncate();
@@ -58,6 +60,7 @@ class DatabaseSeeder extends Seeder
             ClubsSeeder::class,
             PlayersSeeder::class,
             CompetitionSeeder::class,
+            CompetitionSeasonSeeder::class,
             MatchesSeeder::class,
             MatchTeamStatsSeeder::class,
             PlayerMatchStatsSeeder::class,

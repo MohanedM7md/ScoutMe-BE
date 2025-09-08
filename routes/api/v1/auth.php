@@ -11,7 +11,14 @@ Route::post('/register/scout-player', [JuniorPlayerController::class, 'register'
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::put('/scout-player/{playerId}', [JuniorPlayerController::class, 'updateProfile']);
+    Route::get('/scout-player/profile', [JuniorPlayerController::class, 'fetchProfile']);
+    Route::put('/scout-player', [JuniorPlayerController::class, 'updateProfile']);
+    Route::delete('/scout-player', [JuniorPlayerController::class, 'deleteProfile']);
+
+    Route::get('/scout', [ScoutController::class, 'fetchProfile']);
+    Route::put('/scout', [ScoutController::class, 'updateProfile']);
+
+
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'getAuthenticatedUser']);
 });

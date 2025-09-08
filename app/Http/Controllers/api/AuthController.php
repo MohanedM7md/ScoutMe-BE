@@ -14,22 +14,12 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request)
     {
-        $credentials = $request->validated();
+        $user = User::where('email', $request->email)->first();
 
-        $user = User::where('email', $credentials['email'])->first();
-
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
-
         $token = $user->createToken('auth_token')->plainTextToken;
-
-
-        if ($user->role === 'player') {
-            $user->load('player');
-        } elseif ($user->role === 'scout') {
-            $user->load('scout');
-        }
 
         return response()->json([
             'token' => $token,
@@ -39,7 +29,6 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
-
         return response()->json(['message' => 'Logged out successfully']);
     }
 

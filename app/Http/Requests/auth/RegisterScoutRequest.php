@@ -15,12 +15,12 @@ class RegisterScoutRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|string|email|max:255|unique:users,email',
-            'password'  => ['required', 'confirmed', Password::defaults()],
-            'phone'     => 'sometimes|nullable|string|max:20',
-            'logo_url'  => 'sometimes|nullable|url',
-            'notes'     => 'sometimes|nullable|string',
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|string|email|max:255|unique:users,email',
+            'password'   => ['required',  Password::defaults()],
+            'phone_number'      => 'required|regex:/^\+[1-9]\d{1,14}$/',
+            'logo_url'   => 'sometimes|nullable|url',
+            'notes'      => 'sometimes|nullable|string',
             'country_id' => 'sometimes|nullable|string|size:2|exists:countries,id',
         ];
     }

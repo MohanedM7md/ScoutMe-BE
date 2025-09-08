@@ -3,95 +3,75 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterScoutRequest;
+use App\Http\Requests\ScoutUpdateProfileRequest;
+use App\Http\Resources\ScoutResource;
+use App\Http\Resources\ScoutWithTokenResource;
+use App\Http\Resources\UserResource;
 use App\Models\Scout;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class ScoutController extends Controller
 {
-    /**
-     * Get the authenticated scout profile
-     */
-    public function getProfile(Request $request)
+    public function fetchProfile(Request $request): JsonResponse
     {
-        return response()->json([
-            'user' => $request->user(),
-            'scout' => $request->user()->scout,
-        ]);
+        $user = $request->user();
+        $scout = $user->scout;
+
+        if (!$scout) {
+            return response()->json([
+                'message' => 'Player profile not found'
+            ], 404);
+        }
+
+        return response()->json(
+            $scout
+        );
     }
 
-    /**
-     * Register a new scout
-     */
-    public function register(Request $request)
+    public function register(RegisterScoutRequest $request)
     {
-        $validated = $request->validate([
-            // User data
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-
-            // Scout-specific fields
-            'phone' => 'sometimes|nullable|string|max:20',
-            'logo_url' => 'sometimes|nullable|string',
-            'notes' => 'sometimes|nullable|string',
-
-            // If you want country ISO code
-            'country_id' => 'sometimes|nullable|string|size:2|exists:countries,id',
-        ]);
-
         // Create user
         $user = User::create([
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone_number' => $request->phone_number,
             'user_role' => 'scout',
         ]);
 
-        // Assign role (if using Spatie roles/permissions)
         $user->assignRole('scout');
+
 
         // Create scout profile
         $scout = Scout::create([
             'user_id' => $user->id,
-            'name' => $validated['name'],
-            'phone' => $validated['phone'] ?? null,
-            'logo_url' => $validated['logo_url'] ?? null,
-            'notes' => $validated['notes'] ?? null,
-            'country_id' => $validated['country_id'] ?? null,
+            'name' => $request->name,
+            'logo_url' => $request->logo_url,
+            'notes' => $request->notes,
+            'country_id' => $request->country_id,
         ]);
 
-        // Issue Sanctum token
         $token = $user->createToken('scout_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Scout created successfully',
-            'user' => array_merge($user->only(['id', 'email', 'user_role', 'created_at']), $scout->toArray()),
-            'token' => $token,
+            'token'  => $token,
+            'scout' => new ScoutResource($scout->load('user')),
         ], 201);
     }
 
-    /**
-     * Update scout profile
-     */
-    public function updateProfile(Request $request)
+    public function updateProfile(RegisterScoutRequest $request): JsonResponse
     {
         $scout = $request->user()->scout;
-
-        $validated = $request->validate([
-            'phone' => 'sometimes|nullable|string|max:20',
-            'logo_url' => 'sometimes|nullable|string',
-            'notes' => 'sometimes|nullable|string',
-            'country_id' => 'sometimes|nullable|string|size:2|exists:countries,id',
-        ]);
+        $validated = $request->validated();
 
         $scout->update($validated);
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => array_merge(
-                $scout->toArray()
-            )
+            'scout' => new ScoutResource($scout->fresh()),
         ]);
     }
 }

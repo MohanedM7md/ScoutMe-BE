@@ -7,13 +7,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ScoutResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'email'            => $this->user->email,
+            'user_id'          => $this->user_id,
+            'phone_number'     => $this->user->phone_number,
+            'logo_url'         => $this->logo_url,
+            'notes'            => $this->notes,
+        ];
     }
 }

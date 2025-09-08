@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\CompetitionController;
+use App\Http\Controllers\Api\Admin\CountryController;
 use App\Http\Controllers\Api\Admin\MatchController;
 use App\Http\Controllers\Api\Admin\PlayerController;
 use App\Http\Controllers\Api\Admin\StatsController;
@@ -9,6 +10,8 @@ use App\Http\Controllers\Api\Admin\SeasonController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
+    Route::apiResource('countries', CountryController::class);
+
     Route::apiResource('competitions', CompetitionController::class);
 
     Route::apiResource('matches', MatchController::class);
