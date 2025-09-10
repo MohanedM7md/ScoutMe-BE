@@ -37,6 +37,12 @@ class Competition extends Model
         return $this->belongsToMany(Season::class, 'competition_season')
             ->withTimestamps();
     }
+
+    public function clubs()
+    {
+        return $this->belongsToMany(Club::class, 'competition_club')
+            ->withTimestamps();
+    }
     public function footballMatches()
     {
         return $this->hasMany(FootballMatch::class);

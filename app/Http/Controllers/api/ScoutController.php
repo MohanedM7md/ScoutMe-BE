@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterScoutRequest;
-use App\Http\Requests\ScoutUpdateProfileRequest;
+use App\Http\Requests\auth\RegisterScoutRequest;
+use App\Http\Requests\auth\ScoutUpdateProfileRequest;
 use App\Http\Resources\ScoutResource;
 use App\Http\Resources\ScoutWithTokenResource;
 use App\Http\Resources\UserResource;

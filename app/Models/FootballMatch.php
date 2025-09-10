@@ -4,6 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+
+
+
 use Carbon\Carbon;
 
 class FootballMatch extends Model
@@ -24,49 +32,49 @@ class FootballMatch extends Model
         'match_date' => 'datetime',
     ];
 
-    public function homeTeam()
+    public function homeTeam(): BelongsTo
     {
         return $this->belongsTo(Club::class, 'home_team_id');
     }
 
-    public function awayTeam()
+    public function awayTeam(): BelongsTo
     {
         return $this->belongsTo(Club::class, 'away_team_id');
     }
 
-    public function teamStats()
+    public function teamStats(): HasMany
     {
         return $this->hasMany(MatchTeamStats::class);
     }
 
-    public function playerStats()
+    public function playerStats(): HasMany
     {
         return $this->hasMany(PlayerMatchStats::class);
     }
-    public function season()
+    public function season(): BelongsTo
     {
         return $this->belongsTo(Season::class);
     }
 
-    public function homeTeamStats()
+    public function homeTeamStats(): HasOne
     {
         return $this->hasOne(MatchTeamStats::class)
             ->where('club_id', $this->home_team_id);
     }
 
-    public function awayTeamStats()
+    public function awayTeamStats(): HasOne
     {
         return $this->hasOne(MatchTeamStats::class)
             ->where('club_id', $this->away_team_id);
     }
-    public function competition()
+    public function competition(): BelongsTo
     {
         return $this->belongsTo(Competition::class)->withDefault([
             'name' => 'Friendly Match',
             'logo_url' => 'default/league_logo.png'
         ]);
     }
-    public function players()
+    public function players(): HasManyThrough
     {
         return $this->hasManyThrough(
             Player::class,
@@ -87,7 +95,7 @@ class FootballMatch extends Model
         return $players;
     }
 
-    public function scopeFilter($query, array $filters)
+    public function scopeFilter($query, array $filters): void
     {
         if (!empty($filters['team'])) {
             $team = $filters['team'];
@@ -100,9 +108,12 @@ class FootballMatch extends Model
             });
         }
 
+        if (!empty($filters['competition_id'])) {
+            $query->where('competition_id', $filters['competition_id']);
+        }
         if (!empty($filters['competition'])) {
             $competition = $filters['competition'];
-            $query->whereHas('competition', function ($q) use ($competition) {
+            $query->whereHas('competition', function ($q) use ($competition): void {
                 $q->where('name', 'like', "%{$competition}%");
             });
         }
@@ -111,8 +122,9 @@ class FootballMatch extends Model
         }
         if (!empty($filters['season'])) {
             $season = $filters['season'];
-            $query->whereHas('season', function ($q) use ($season) {
-                $q->where('name', 'like', "%{$season}%");
+            
+            $query->whereHas('season', function ($q) use ($season): void {
+                $q->where('name', $season);
             });
         }
         if (!empty($filters['date'])) {

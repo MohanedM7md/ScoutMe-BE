@@ -26,10 +26,16 @@ return new class extends Migration
 
         Schema::create('competition_season', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('competition_id')->constrained();
-            $table->foreignId('season_id')->constrained();
+            $table->foreignId('competition_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('season_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            $table->unique(['competition_id', 'season_id']);
+        });
+
+        Schema::create('competition_club', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('competition_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('club_id')->constrained()->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 

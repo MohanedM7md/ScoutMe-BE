@@ -30,6 +30,7 @@ class MatchController extends Controller
         $filters = $request->only([
             'team',
             'competition',
+            'competition_id',
             'competition_type',
             'season',
             'season_id',
@@ -40,9 +41,9 @@ class MatchController extends Controller
         ]);
 
         $matches = $query
-            ->filter($filters)
-            ->orderBy('match_date', 'desc')
-            ->paginate($request->input('per_page', 10));
+            ->filter(filters: $filters)
+            ->orderBy(column: 'match_date', direction: 'desc')
+            ->paginate(perPage: $request->input(key: 'per_page', default: 10));
 
         return new FootballMatchCollection($matches);
     }

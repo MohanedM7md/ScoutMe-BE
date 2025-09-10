@@ -10,4 +10,5 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/v1/subscriptions.php';
     require __DIR__ . '/api/v1/dashboard.php';
     require __DIR__ . '/api/v1/admin.php';
+    require __DIR__ . '/api/v1/teams.php';
 });

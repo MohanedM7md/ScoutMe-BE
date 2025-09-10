@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SearchPlayerRequest;
+use App\Http\Requests\Players\SearchPlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
 use Illuminate\Http\Request;

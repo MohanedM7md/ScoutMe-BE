@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePlayerRequest;
-use App\Http\Requests\UpdatePlayerRequest;
+use App\Http\Requests\Players\StorePlayerRequest;
+use App\Http\Requests\Players\UpdatePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
 

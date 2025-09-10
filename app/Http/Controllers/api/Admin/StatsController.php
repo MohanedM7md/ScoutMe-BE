@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateTeamStatsRequest;
-use App\Http\Requests\UpdatePlayerStatsRequest;
-use App\Http\Requests\UpdateGoalkeeperStatsRequest;
+use App\Http\Requests\Players\UpdatePlayerStatsRequest;
+use App\Http\Requests\Players\UpdateGoalkeeperStatsRequest;
 use App\Models\FootballMatch;
 use App\Models\MatchTeamStats;
 use App\Models\PlayerMatchStats;

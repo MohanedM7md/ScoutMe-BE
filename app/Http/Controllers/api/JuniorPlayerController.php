@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterJuniorPlayerRequest;
-use App\Http\Requests\UpdateJuniorPlayerRequest;
+use App\Http\Requests\auth\RegisterJuniorPlayerRequest;
+use App\Http\Requests\auth\UpdateJuniorPlayerRequest;
 use App\Http\Resources\JuniorPlayerResource;
 use App\Models\JuniorPlayer;
 use App\Models\User;

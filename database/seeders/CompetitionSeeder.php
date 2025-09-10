@@ -20,7 +20,7 @@ class CompetitionSeeder extends Seeder
         [
             'name' => 'UEFA Champions League',
             'short_name' => 'UCL',
-            'type' => 'tournament',
+            'type' => 'cup',
             'country_code' => null, // International
             'gender' => 'men',
             'age_group' => 'senior',
@@ -29,7 +29,7 @@ class CompetitionSeeder extends Seeder
         [
             'name' => 'FA Cup',
             'short_name' => 'FAC',
-            'type' => 'tournament',
+            'type' => 'cup',
             'country_code' => 'GB',
             'gender' => 'men',
             'age_group' => 'senior',
@@ -56,7 +56,7 @@ class CompetitionSeeder extends Seeder
         [
             'name' => 'UEFA Youth League',
             'short_name' => 'UYL',
-            'type' => 'tournament',
+            'type' => 'cup',
             'country_code' => null,
             'gender' => 'men',
             'age_group' => 'U20',

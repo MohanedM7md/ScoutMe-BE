@@ -17,7 +17,8 @@ class MatchTeamStatsSeeder extends Seeder
         foreach ($matches as $match) {
             // Randomize home possession between 40–70%
             $homePossession = (float) round(rand(40, 70) / 100, 2);
-
+            $firstTeamRes = rand(-1,1); 
+            $secondTeamRes = $firstTeamRes == 1 ? -1 : ($firstTeamRes == -1 ? 1 : 0);
             // ---- Home Team ----
             MatchTeamStats::create([
                 'football_match_id' => $match->id,
@@ -27,7 +28,7 @@ class MatchTeamStatsSeeder extends Seeder
                 // Result basics
                 'goals' => rand(0, 4),
                 'goals_conceded' => rand(0, 4),
-
+                'result'=> $firstTeamRes,
                 // Attack
                 'shots' => rand(8, 20),
                 'shots_on_target' => rand(3, 10),
@@ -70,10 +71,10 @@ class MatchTeamStatsSeeder extends Seeder
                 'football_match_id' => $match->id,
                 'club_id' => $match->away_team_id,
                 'is_home' => false,
-                'season_id' => $seasonId,
                 // Result basics
                 'goals' => rand(0, 4),
                 'goals_conceded' => rand(0, 4),
+                'result' => $secondTeamRes,
                 'season_id' => $season->random()->id,
                 // Attack
                 'shots' => rand(5, 15),

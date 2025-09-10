@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreFootballMatchRequest;
-use App\Http\Requests\UpdateFootballMatchRequest;
+use App\Http\Requests\Matches\StoreFootballMatchRequest;
+use App\Http\Requests\Matches\UpdateFootballMatchRequest;
 use App\Http\Resources\FootballMatchResource;
 use App\Models\FootballMatch;
 use Illuminate\Http\Request;

@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('football_match_id')->constrained('football_matches');
             $table->foreignId('club_id')->constrained('clubs');
             $table->foreignId('season_id')->constrained('seasons');
+            
             $table->boolean('is_home')->default(false);
             // Match result
             $table->unsignedTinyInteger('goals')->default(0);
