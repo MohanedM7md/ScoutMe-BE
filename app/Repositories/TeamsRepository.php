@@ -1,24 +1,55 @@
 <?php
 
 namespace App\Repositories;
-
-use Illuminate\Support\Facades\DB;
 use App\Models\Club;
 use App\Models\MatchTeamStats;
+use Illuminate\Support\Facades\Schema;
 
 class TeamsRepository
 {
-    public function getTeamsSatanding($teams = 5,$limit = 5){
-        $TeamsSatanding = Club::query()
-        ->withCount([
-        'teamStats as total_matches',
-        'teamStats as wins'   => fn($q) => $q->where('result', 1),
-        'teamStats as losses' => fn($q) => $q->where('result', -1),
-        'teamStats as draws'  => fn($q) => $q->where('result', 0),
-                ])
-                ->with(['teamStats' => fn($q) => $q->orderBy('id', 'desc')->limit($limit)])
-                ->limit($teams)
-                ->get();
-        return $TeamsSatanding;
-    }   
+    public function getTeamsStanding($teamsLimit = 5, $satsLimit = 5, $filters = []){
+        $query = Club::query()
+                ->withTeamRecords()
+                ->with(['teamStats' => fn($q) => $q->orderBy('id', 'desc')->limit($satsLimit)]);
+        
+            if (isset($filters['competition_id'])) {
+                $query->byCompetition($filters['competition_id']);
+            }
+            
+            if (isset($filters['country_code'])) {
+                $query->byCountry($filters['country_code']);
+            }
+            
+            if (isset($filters['team_id'])) {
+                $query->byTeam($filters['team_id']);
+            }
+            
+            return $query ->limit($teamsLimit)->get();
+        }
+        
+    public function getTeamProfile($teamId){
+        $query = Club::query()
+        ->where('id',$teamId)
+        ->withTeamRecords()->first();
+        return $query;
+    }
+
+    public function getTeamAggStats($seasonId, $clubId){
+        $columns = Schema::getColumnListing('match_team_stats');
+        
+        $ignored = ['id', 'football_match_id', 'created_at'
+                        , 'updated_at', 'deleted_at','club_id','result'];
+
+        foreach($columns as $col){
+            if (in_array($col, $ignored)) continue;
+
+            $selects[] = (in_array($col, ['possession', 'expected_goals']) ? 
+                        "AVG($col)" : "SUM($col)") . " as $col";
+        }
+        $query = MatchTeamStats::where('club_id', $clubId)
+                    ->where('season_id', $seasonId)
+                    ->selectRaw(implode(', ', $selects))
+                    ->first();
+        return $query;
+    }
 }

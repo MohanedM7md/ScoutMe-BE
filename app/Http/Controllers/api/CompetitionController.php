@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Competition;
-use App\Http\Resources\CompetitionResource;
+use App\Http\Resources\competition\CompetitionResource;
 use Illuminate\Http\Request;
 
 class CompetitionController extends Controller
@@ -32,6 +32,6 @@ class CompetitionController extends Controller
 
     public function show(Competition $competition)
     {
-        return response()->json($competition->load('matches', 'country'));
+        return new CompetitionResource($competition);
     }
 }

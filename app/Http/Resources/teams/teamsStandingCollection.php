@@ -6,10 +6,8 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class teamsStandingCollection extends ResourceCollection
 {
-    public function toArray($request): array
+    public function toArray($request)
     {
-        return [
-            'data' => teamsStandingResource::collection($this->collection)
-        ];
+        return teamsStandingResource::collection($this->collection);
     }
 }

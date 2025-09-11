@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Repositories\DashboardRepository;
 use App\Http\Resources\FootballMatchCollection;
+use App\Http\Resources\competition\FeaturedCompetitionsCollection;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -25,11 +26,13 @@ class DashboardController extends Controller
 
         public function getTopCompetetion(Request $request)
         {
-            $limit = $request->query('limit', 4); // default = 10
-            $season = $request->query('season',"2024/2025");       // null if not provided
-            $type = $request->query('type',"");       // null if not provided
-            $competitions = $this->repo->getCompetitions($limit,$season,$type);
-            return response()->json($competitions);
+            $limit = $request->query('limit', 4);// null if not provided
+            $filters = $request->only([
+                'season',
+                'type'
+            ]);
+            $competitions = $this->repo->getCompetitions($limit, $filters );
+            return new FeaturedCompetitionsCollection($competitions);
         }
 
         public function getRecentMatchs(Request $request){

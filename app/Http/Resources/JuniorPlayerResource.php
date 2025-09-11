@@ -11,7 +11,7 @@ class JuniorPlayerResource extends JsonResource
         return [
             'email'            => $this->user->email,
             'user_id'          => $this->user_id,
-            'phone_number'            => $this->user->phone_number,
+            'phone_number'     => $this->user->phone_number,
             'first_name'       => $this->first_name,
             'last_name'        => $this->last_name,
             'display_name'     => $this->display_name,

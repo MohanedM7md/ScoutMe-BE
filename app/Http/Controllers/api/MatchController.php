@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\FootballMatchResource;
-use App\Http\Resources\FootballMatchCollection;
+use App\Http\Resources\matchs\FootballMatchResource;
+use App\Http\Resources\matchs\FootballMatchCollection;
 use App\Models\FootballMatch;
 use Illuminate\Http\Request;
 
@@ -29,6 +29,7 @@ class MatchController extends Controller
 
         $filters = $request->only([
             'team',
+            'team_id',
             'competition',
             'competition_id',
             'competition_type',

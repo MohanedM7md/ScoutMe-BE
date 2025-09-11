@@ -1,6 +1,6 @@
 <?php
-
-namespace App\Http\Resources;
+// app/Http/Resources/CompetitionResource.php
+namespace App\Http\Resources\competition;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -11,12 +11,13 @@ class CompetitionResource extends JsonResource
         return [
             'id'           => $this->id,
             'name'         => $this->name,
-            'short_name'   => $this->short_name,
+            'shortName'    => $this->short_name,
+            'country'      => $this->country?->name,
             'type'         => $this->type,
-            'country_code' => $this->country_code,
             'gender'       => $this->gender,
             'age_group'    => $this->age_group,
             'logo_url'     => $this->logo_url,
         ];
     }
+
 }

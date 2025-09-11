@@ -23,7 +23,6 @@ class Player extends Model
         'weight_kg',
         'primary_position',
         'player_image',
-        'is_profile_complete',
     ];
 
     protected $casts = [

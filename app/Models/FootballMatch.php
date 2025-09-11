@@ -97,6 +97,14 @@ class FootballMatch extends Model
 
     public function scopeFilter($query, array $filters): void
     {
+        if (!empty($filters['team_id'])) {
+            $teamId = $filters['team_id'];
+            $query->where(function ($q) use ($teamId) {
+                $q->where('home_team_id', $teamId)
+                  ->orWhere('away_team_id', $teamId);
+            });
+        }
+
         if (!empty($filters['team'])) {
             $team = $filters['team'];
             $query->where(function ($q) use ($team) {

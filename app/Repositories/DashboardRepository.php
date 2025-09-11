@@ -28,15 +28,14 @@ class DashboardRepository
             ->get();
     }
 
-    public function getCompetitions ($limit =4, $seasonName="2024/2025",$type="")
+    public function getCompetitions ($limit =4, $filters)
     {
         $competitions = Competition::query()
                             ->select(
-                                'competitions.id',
-                                'competitions.name',
-                                'competitions.short_name',
-                                'competitions.logo_url as logo',
-                                'css.name as country',
+                                'competitions.name as competition_name',
+                                'competitions.id as competition_id',
+                                'competitions.*',
+                                'css.*',
                                 's.name as season',
                                 DB::raw('COUNT(DISTINCT fm.id) as matches'),
                                 DB::raw('COUNT(DISTINCT clubs.id) as teams')
@@ -48,13 +47,13 @@ class DashboardRepository
                             ->join('seasons as s', 'cs.season_id', '=', 's.id')
                             ->leftJoin('football_matches as fm', 'fm.season_id', '=', 's.id')
                             ->groupBy('competitions.id', 's.name')
-                            ->where('s.name', $seasonName)
+                            ->where('s.name', $filters['season']??'2024/2025')
                             ->limit($limit)
                             ->get();
-        if (!empty($type)) {
-            $competitions->where('competitions.type', $type);
+        if (!empty($filters['type'])) {
+            $competitions->where('competitions.type', $filters['type']);
         }
-        
+            
         return $competitions;
     }
 

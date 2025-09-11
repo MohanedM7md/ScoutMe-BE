@@ -13,8 +13,8 @@ class Club extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
-        'competition_id',
         'short_name',
         'country_code',
         'club_type',
@@ -54,5 +54,29 @@ class Club extends Model
     public function players(): HasMany
     {
         return $this->hasMany(Player::class, 'team_id');
+    }
+
+    public function scopeWithTeamRecords($query){
+        return $query
+        ->withCount([
+            'teamStats as total_matches',
+            'teamStats as wins'   => fn($q) => $q->where('result', 1),
+            'teamStats as losses' => fn($q) => $q->where('result', -1),
+            'teamStats as draws'  => fn($q) => $q->where('result', 0),
+        ]);
+    }
+    public function scopeByCompetition($query, $competitionId)
+    {
+        return $query->whereHas('competitions', fn($q)=>$q->where('competition_id', $competitionId));
+    }
+
+    public function scopeByCountry($query, $countryCode)
+    {
+        return $query->where('country_code', $countryCode);
+    }
+
+    public function scopeByTeam($query, $teamId)
+    {
+        return $query->where('id', $teamId);
     }
 }
