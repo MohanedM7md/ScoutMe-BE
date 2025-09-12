@@ -16,15 +16,12 @@ class PlayerResource extends JsonResource
             'birth_date'        => $this->birth_date,
             'height_cm'         => $this->height_cm,
             'weight_kg'         => $this->weight_kg,
-            'primary_position'  => $this->whenLoaded('primaryPosition', function () {
-                return [
+            'player_image'      => $this->player_image,
+            'nationality'       => $this->nationality?->name,
+            'primary_position'  => [
                     'id'   => $this->primaryPosition->id,
                     'name' => $this->primaryPosition->full_name,
-                ];
-            }),
-            'nationality'       => $this->whenLoaded('nationality'),
-            'player_image'      => $this->player_image,
-            'is_profile_complete' => $this->is_profile_complete,
+                ],
         ];
     }
 }

@@ -89,7 +89,6 @@ class FootballMatch extends Model
     {
         $players =  $this->players()
             ->where('team_id', $teamId)
-            ->select('player_id', 'first_name', 'last_name', 'display_name')
             ->get();
 
         return $players;

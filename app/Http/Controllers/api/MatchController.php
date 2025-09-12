@@ -3,30 +3,41 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\PlayerRepository;
+use App\Repositories\MatchsRepository;
 use App\Http\Resources\matchs\FootballMatchResource;
 use App\Http\Resources\matchs\FootballMatchCollection;
+use App\Http\Resources\matchs\FootballMatchStatsResource;
+use App\Http\Resources\PlayerResource;
+use App\Http\Resources\players\PlayerStatsResource;
+use App\Models\Player;
 use App\Models\FootballMatch;
 use Illuminate\Http\Request;
 
 class MatchController extends Controller
 {
+    protected $playerRepo;
+    protected $matchRepo;
+
+    public function __construct(PlayerRepository $playerRepo, MatchsRepository $matchRepo)
+    {
+        $this->playerRepo = $playerRepo;
+        $this->matchRepo = $matchRepo;
+    }
 
     public function index(Request $request)
     {
-        $query = FootballMatch::query();
-
-        $query->with(['homeTeam', 'awayTeam']);
-
+        $with = ['homeTeam', 'awayTeam'];
         if ($request->boolean('with_competition')) {
-            $query->with('competition');
+            $with[] = 'competition';
         }
         if ($request->boolean('with_season')) {
-            $query->with('season');
+            $with[] = 'season';
         }
         if ($request->boolean('with_stats')) {
-            $query->with(['teamStats', 'playerStats.player']);
+            $with[] = 'teamStats';
+            $with[] = 'playerStats.player';
         }
-
         $filters = $request->only([
             'team',
             'team_id',
@@ -40,11 +51,10 @@ class MatchController extends Controller
             'date_to',
             'year'
         ]);
+        
+        $perPage = $request->input('per_page');
 
-        $matches = $query
-            ->filter(filters: $filters)
-            ->orderBy(column: 'match_date', direction: 'desc')
-            ->paginate(perPage: $request->input(key: 'per_page', default: 10));
+        $matches = $this->matchRepo->getMatches($filters,$with,$perPage);
 
         return new FootballMatchCollection($matches);
     }
@@ -52,37 +62,26 @@ class MatchController extends Controller
 
     public function show(FootballMatch $match)
     {
-        $match->load(['homeTeam', 'awayTeam', 'competition']);
-
         return new FootballMatchResource($match);
     }
 
 
     public function getMatchStats(FootballMatch $match)
     {
-        return response()->json([
-            'home_team_stats' => $match->homeTeamStats,
-            'away_team_stats' => $match->awayTeamStats,
-            'home_players'    => $match->getTeamPlayers($match->home_team_id),
-            'away_players'    => $match->getTeamPlayers($match->away_team_id),
-        ]);
+        return new FootballMatchStatsResource($match);
     }
 
 
     public function getPlayersByTeam(FootballMatch $match, $teamId)
     {
         $players = $match->getTeamPlayers($teamId);
-
-        return response()->json($players);
+        return PlayerResource::collection($players);
     }
 
 
-    public function getPlayerStatsById(FootballMatch $match, $playerId)
+    public function getPlayerStatsById(FootballMatch $match, Player $player)
     {
-        $playerStat = $match->playerStats()
-            ->where('player_id', $playerId)
-            ->with(['player', 'position'])
-            ->first();
+        $playerStat = $this->playerRepo->getPlayerMatchStats($match, $player);
 
         if (!$playerStat) {
             return response()->json([
@@ -90,10 +89,6 @@ class MatchController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'player'   => $playerStat->player,
-            'position' => $playerStat->position,
-            'stats'    => $playerStat->all_stats,
-        ]);
+        return new PlayerStatsResource($playerStat);
     }
 }

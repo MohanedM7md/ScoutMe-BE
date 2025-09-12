@@ -13,7 +13,7 @@ class PlayerMatchStatsSeeder extends Seeder
     public function run()
     {
         $matches = FootballMatch::all();
-        $players = Player::with('primaryPosition')->get();
+        $players = Player::all();
         $season = Season::all();
         foreach ($matches as $match) {
             $teamPlayers = $players->random(rand(14, 18));
@@ -21,7 +21,7 @@ class PlayerMatchStatsSeeder extends Seeder
             foreach ($teamPlayers as $player) {
                 $minutes = rand(0, 90);
                 $started = $minutes > 60;
-                $isGoalkeeper = $player->primaryPosition->category === 'Goalkeeper';
+                $isGoalkeeper = $player->primary_position === 'GK';
 
                 $baseStats = PlayerMatchStats::create([
                     // Basic info
@@ -89,6 +89,7 @@ class PlayerMatchStatsSeeder extends Seeder
                 if ($isGoalkeeper) {
                     $baseStats->goalkeeperStats()->create([
                         'saves_total' => rand(1, 8),
+                        'player_match_stat_id' => $baseStats->id,
                         'saves_inside_box' => rand(0, 5),
                         'saves_outside_box' => rand(0, 3),
                         'goals_conceded' => rand(0, 3),

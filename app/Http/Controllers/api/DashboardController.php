@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\DashboardRepository;
-use App\Http\Resources\FootballMatchCollection;
+use App\Http\Resources\matchs\FootballMatchCollection;
 use App\Http\Resources\competition\FeaturedCompetitionsCollection;
 use Illuminate\Http\Request;
 

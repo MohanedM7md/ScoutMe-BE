@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\PlayerRepository;
 use App\Http\Requests\Players\SearchPlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
@@ -10,6 +11,12 @@ use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
+
+    protected $repo;
+
+    public function __construct(PlayerRepository $repo){
+        $this->repo = $repo;
+    }
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 10);
@@ -20,19 +27,20 @@ class PlayerController extends Controller
             ->orderBy('last_name')
             ->paginate($perPage, ['*'], 'page', $page);
 
-        return PlayerResource::collection($players->load('nationality'));
+        return PlayerResource::collection($players);
     }
 
     public function show(Player $player)
     {
-        return new PlayerResource(
-            $player->load([
-                'primaryPosition',
-                'nationality',
-            ])
-        );
+        return new PlayerResource($player);
     }
 
+
+    public function getPlayerSeasonalStats(Request $request, $playerId){
+        $seasonId = $request->query('season_id');
+        $playerStats = $this->repo->getPlayerAggStats($seasonId,$playerId);
+        return response()->json($playerStats);
+    }
 
     public function search(SearchPlayerRequest $request)
     {

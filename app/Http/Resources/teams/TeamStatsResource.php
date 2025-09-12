@@ -4,11 +4,12 @@ namespace App\Http\Resources\teams;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TeamSeasonStats extends JsonResource
+class TeamStatsResource extends JsonResource
 {
     public function toArray($request): array
     {
         return [
+            "id"                            => $this->id,
             "goals"                         => (int) $this->goals,
             "goalsConceded"                 => (int) $this->goals_conceded,
             "penaltyGoals"                  => (int) $this->penalty_goals,

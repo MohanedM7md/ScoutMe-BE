@@ -2,7 +2,9 @@
 
 namespace App\Repositories;
 use App\Models\Club;
+use App\Models\FootballMatch;
 use App\Models\MatchTeamStats;
+use App\Models\Player;
 use Illuminate\Support\Facades\Schema;
 
 class TeamsRepository
@@ -52,4 +54,5 @@ class TeamsRepository
                     ->first();
         return $query;
     }
+
 }
