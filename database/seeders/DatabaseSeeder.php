@@ -64,6 +64,7 @@ class DatabaseSeeder extends Seeder
             CompetitionClubSeeder::class,
             MatchesSeeder::class,
             MatchTeamStatsSeeder::class,
+            FootballMatchPlayerSeeder::class,
             PlayerMatchStatsSeeder::class,
         ]);
     }

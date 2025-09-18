@@ -13,6 +13,9 @@ class DashboardRepository
     {
         return Player::select(
             'players.id',
+            'players.first_name as firstName',
+            'players.last_name as lastName',
+            'players.player_image as image',
             'display_name as name',
             'positions.full_name as position',
             'clubs.name as club',

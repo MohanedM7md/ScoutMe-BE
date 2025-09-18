@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
@@ -74,26 +74,19 @@ class FootballMatch extends Model
             'logo_url' => 'default/league_logo.png'
         ]);
     }
-    public function players(): HasManyThrough
-    {
-        return $this->hasManyThrough(
-            Player::class,
-            PlayerMatchStats::class,
-            'football_match_id',
-            'id',
-            'id',
-            'player_id'
-        )->distinct();
-    }
-    public function getTeamPlayers(int $teamId)
-    {
-        $players =  $this->players()
-            ->where('team_id', $teamId)
-            ->get();
+public function players(): BelongsToMany
+{
+    return $this->belongsToMany(Player::class, 'football_match_player', 'match_id', 'player_id')
+        ->withPivot(['team_id', 'played_position'])
+        ->withTimestamps();
+}
 
-        return $players;
-    }
-
+public function getTeamPlayers(int $teamId)
+{
+    return $this->players()
+        ->wherePivot('team_id', $teamId)
+        ->get();
+}
     public function scopeFilter($query, array $filters): void
     {
         if (!empty($filters['team_id'])) {
@@ -103,7 +96,12 @@ class FootballMatch extends Model
                   ->orWhere('away_team_id', $teamId);
             });
         }
-
+        if (!empty($filters['player_id'])) {
+            $playerId = $filters['player_id'];
+            $query->whereHas('players', function ($q) use ($playerId) {
+                $q->where('players.id', $playerId);
+            });
+        }
         if (!empty($filters['team'])) {
             $team = $filters['team'];
             $query->where(function ($q) use ($team) {

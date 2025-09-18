@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Players\StorePlayerRequest;
 use App\Http\Requests\Players\UpdatePlayerRequest;
-use App\Http\Resources\PlayerResource;
+use App\Http\Resources\players\PlayerResource;
 use App\Models\Player;
 
 class playerController extends Controller

@@ -11,8 +11,8 @@ class FootballMatchStatsResource extends JsonResource
     {
         return [
             'matchId'         => $this->id,
-            'home_team_stats' => new TeamStatsResource($this->homeTeamStats),
-            'away_team_stats' => new TeamStatsResource($this->awayTeamStats),
+            'homeTeamStats' => new TeamStatsResource($this->homeTeamStats),
+            'awayTeamStats' => new TeamStatsResource($this->awayTeamStats),
         ];
     }
 }

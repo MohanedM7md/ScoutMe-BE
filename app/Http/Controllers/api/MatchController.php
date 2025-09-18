@@ -8,7 +8,7 @@ use App\Repositories\MatchsRepository;
 use App\Http\Resources\matchs\FootballMatchResource;
 use App\Http\Resources\matchs\FootballMatchCollection;
 use App\Http\Resources\matchs\FootballMatchStatsResource;
-use App\Http\Resources\PlayerResource;
+use App\Http\Resources\players\PlayerResource;
 use App\Http\Resources\players\PlayerStatsResource;
 use App\Models\Player;
 use App\Models\FootballMatch;
@@ -51,8 +51,8 @@ class MatchController extends Controller
             'date_to',
             'year'
         ]);
-        
-        $perPage = $request->input('per_page');
+
+        $perPage = $request->input('per_page',0);
 
         $matches = $this->matchRepo->getMatches($filters,$with,$perPage);
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Matches\StoreFootballMatchRequest;
 use App\Http\Requests\Matches\UpdateFootballMatchRequest;
-use App\Http\Resources\FootballMatchResource;
+use App\Http\Resources\matchs\FootballMatchResource;
 use App\Models\FootballMatch;
 use Illuminate\Http\Request;
 

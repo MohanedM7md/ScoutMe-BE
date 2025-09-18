@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Competitions\StoreCompetitionRequest;
 use App\Http\Requests\Competitions\UpdateCompetitionRequest;
-use App\Http\Resources\CompetitionResource;
+use App\Http\Resources\competition\CompetitionResource;
 use App\Models\Competition;
 
 class CompetitionController extends Controller

@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Repositories\PlayerRepository;
 use App\Http\Requests\Players\SearchPlayerRequest;
-use App\Http\Resources\PlayerResource;
+use App\Http\Resources\players\PlayerResource;
+use App\Http\Resources\players\PlayerSeasonalStatResource;
 use App\Models\Player;
 use Illuminate\Http\Request;
 
@@ -19,14 +20,10 @@ class PlayerController extends Controller
     }
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 0);
         $page    = $request->input('page', 1);
-
-        $players = Player::with('primaryPosition')
-            ->filter($request->only(['position', 'name']))
-            ->orderBy('last_name')
-            ->paginate($perPage, ['*'], 'page', $page);
-
+        $filters = $request->only(['team_id', 'nationality','name','position']);
+        $players = $this->repo->getPlayers($filters, $page,$perPage);
         return PlayerResource::collection($players);
     }
 
@@ -39,7 +36,7 @@ class PlayerController extends Controller
     public function getPlayerSeasonalStats(Request $request, $playerId){
         $seasonId = $request->query('season_id');
         $playerStats = $this->repo->getPlayerAggStats($seasonId,$playerId);
-        return response()->json($playerStats);
+        return new PlayerSeasonalStatResource($playerStats);
     }
 
     public function search(SearchPlayerRequest $request)

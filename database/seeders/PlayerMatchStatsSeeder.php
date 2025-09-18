@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\FootballMatch;
-use App\Models\Player;
-use App\Models\Season;
 use App\Models\PlayerMatchStats;
 use Illuminate\Database\Seeder;
 
@@ -12,24 +10,30 @@ class PlayerMatchStatsSeeder extends Seeder
 {
     public function run()
     {
-        $matches = FootballMatch::all();
-        $players = Player::all();
-        $season = Season::all();
-        foreach ($matches as $match) {
-            $teamPlayers = $players->random(rand(14, 18));
+        $matches = FootballMatch::with('players')->get();
 
-            foreach ($teamPlayers as $player) {
+        foreach ($matches as $match) {
+            foreach ($match->players as $player) {
+                // Prevent duplicate stats if already exist
+                if (PlayerMatchStats::where('player_id', $player->id)
+                    ->where('football_match_id', $match->id)
+                    ->exists()) {
+                    continue;
+                }
+
                 $minutes = rand(0, 90);
                 $started = $minutes > 60;
-                $isGoalkeeper = $player->primary_position === 'GK';
+                $isGoalkeeper = strtoupper($player->pivot->played_position) === 'GK';
 
                 $baseStats = PlayerMatchStats::create([
-                    // Basic info
+                    // Relations
                     'player_id' => $player->id,
                     'football_match_id' => $match->id,
-                    'played_position' => $player->primary_position,
+                    'season_id' => $match->season_id,
+
+                    // Basic info
+                    'played_position' => $player->pivot->played_position,
                     'is_goalkeeper' => $isGoalkeeper,
-                    'season_id' => $season->random()->id,
 
                     // Playing time
                     'minutes_played' => $minutes,
@@ -40,11 +44,11 @@ class PlayerMatchStatsSeeder extends Seeder
                     // Attacking stats
                     'goals' => rand(0, $minutes > 70 ? 2 : 1),
                     'assists' => rand(0, $minutes > 70 ? 2 : 1),
-                    'shots_total' => rand(0, $isGoalkeeper ? 0 : ($minutes > 45 ? 5 : 3)),
-                    'shots_on_target' => rand(0, $isGoalkeeper ? 0 : ($minutes > 45 ? 3 : 2)),
+                    'shots_total' => $isGoalkeeper ? 0 : rand(0, $minutes > 45 ? 5 : 3),
+                    'shots_on_target' => $isGoalkeeper ? 0 : rand(0, $minutes > 45 ? 3 : 2),
                     'hit_woodwork' => rand(0, $minutes > 70 ? 1 : 0),
-                    'big_chances_missed' => rand(0, $minutes > 60 ? 2 : 1),
-                    'big_chances_created' => rand(0, $minutes > 60 ? 3 : 1),
+                    'big_chances_missed' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 2 : 1),
+                    'big_chances_created' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 3 : 1),
                     'touches_in_box' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 10 : 5),
                     'progressive_receptions' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 8 : 4),
                     'dribbles_attempted' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 6 : 3),
@@ -52,7 +56,7 @@ class PlayerMatchStatsSeeder extends Seeder
                     'progressive_carries' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 5 : 3),
                     'offsides' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 2 : 1),
 
-                    // Defending stats
+                    // Defensive stats
                     'tackles' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 5 : 3),
                     'tackles_won' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 4 : 2),
                     'interceptions' => $isGoalkeeper ? 0 : rand(0, $minutes > 60 ? 4 : 2),
@@ -82,18 +86,18 @@ class PlayerMatchStatsSeeder extends Seeder
                     'heatmap' => json_encode($this->generateHeatmap($isGoalkeeper)),
                 ]);
 
-                // Calculate derived stats
+                // Derived % stats
                 $this->calculateDerivedStats($baseStats);
 
-                // Create goalkeeper-specific stats if needed
+                // GK-specific stats
                 if ($isGoalkeeper) {
                     $baseStats->goalkeeperStats()->create([
-                        'saves_total' => rand(1, 8),
                         'player_match_stat_id' => $baseStats->id,
+                        'saves_total' => rand(1, 8),
                         'saves_inside_box' => rand(0, 5),
                         'saves_outside_box' => rand(0, 3),
                         'goals_conceded' => rand(0, 3),
-                        'clean_sheet' => $baseStats->goals_conceded == 0 ? 1 : 0,
+                        'clean_sheet' => rand(0, 1),
                         'penalties_faced' => rand(0, 1),
                         'penalties_saved' => rand(0, 1),
                         'punches' => rand(0, 3),
@@ -104,38 +108,26 @@ class PlayerMatchStatsSeeder extends Seeder
         }
     }
 
-    protected function generateHeatmap($isGoalkeeper)
+    private function generateHeatmap(bool $isGoalkeeper): array
     {
-        $heatmap = [];
         $zones = $isGoalkeeper ? [
-            'gk_left',
-            'gk_center',
-            'gk_right',
-            'def_left',
-            'def_center',
-            'def_right'
+            'gk_left', 'gk_center', 'gk_right',
+            'def_left', 'def_center', 'def_right'
         ] : [
-            'def_left',
-            'def_center',
-            'def_right',
-            'mid_left',
-            'mid_center',
-            'mid_right',
-            'att_left',
-            'att_center',
-            'att_right'
+            'def_left', 'def_center', 'def_right',
+            'mid_left', 'mid_center', 'mid_right',
+            'att_left', 'att_center', 'att_right'
         ];
 
+        $heatmap = [];
         foreach ($zones as $zone) {
             $heatmap[$zone] = rand(1, 20);
         }
-
         return $heatmap;
     }
 
-    protected function calculateDerivedStats($stats)
+    private function calculateDerivedStats(PlayerMatchStats $stats): void
     {
-        // Calculate percentages
         $stats->shot_accuracy = $stats->shots_total > 0
             ? round(($stats->shots_on_target / $stats->shots_total) * 100, 2)
             : 0;

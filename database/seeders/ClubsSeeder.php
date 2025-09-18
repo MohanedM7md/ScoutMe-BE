@@ -26,9 +26,7 @@ class ClubsSeeder extends Seeder
                 'short_name' => $club['short_name'],
                 'country_code' => $club['country_code'],
                 'club_type' => 'professional',
-                'logo_url' => 'logos/' . strtolower(str_replace(' ', '-', $club['name'])) . '.png',
                 'is_verified' => true,
-
             ]);
         }
     }

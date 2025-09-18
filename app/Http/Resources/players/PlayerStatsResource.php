@@ -9,7 +9,7 @@ class PlayerStatsResource extends JsonResource
     public function toArray($request): array
     {
         $baseStats = [
-            'match_info' => [
+            'matchInfo' => [
                 'minutes_played'   => $this->minutes_played,
                 'rating'           => $this->rating,
                 'position'         => $this->position->full_name,
@@ -46,7 +46,7 @@ class PlayerStatsResource extends JsonResource
                 'tackles' => [
                     'attempted'    => $this->tackles_attempted,
                     'won'          => $this->tackles_won,
-                    'success_rate' => $this->tackle_success_rate,
+                    'successRate' => $this->tackle_success_rate,
                 ],
                 'interceptions' => $this->interceptions,
                 'clearances'    => $this->clearances,
@@ -55,11 +55,11 @@ class PlayerStatsResource extends JsonResource
                     'shots' => $this->shot_blocks,
                 ],
                 'recoveries' => $this->recoveries,
-                'aerial_duels' => [
+                'aerialDuels' => [
                     'won'  => $this->aerial_duels_won,
                     'lost' => $this->aerial_duels,
                 ],
-                'ground_duels' => [
+                'groundDuels' => [
                     'won'  => $this->ground_duels_won,
                     'lost' => $this->ground_duels,
                 ],
