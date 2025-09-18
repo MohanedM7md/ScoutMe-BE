@@ -8,7 +8,7 @@ class StoreSeasonRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // Adjust if you add policies
+        return true;
     }
 
     public function rules(): array
