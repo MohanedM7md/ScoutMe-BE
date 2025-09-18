@@ -15,7 +15,6 @@ class CompetitionSeeder extends Seeder
             'country_code' => 'GB',
             'gender' => 'men',
             'age_group' => 'senior',
-            'logo_url' => 'https://example.com/logos/premier-league.png'
         ],
         [
             'name' => 'UEFA Champions League',
@@ -24,7 +23,6 @@ class CompetitionSeeder extends Seeder
             'country_code' => null, // International
             'gender' => 'men',
             'age_group' => 'senior',
-            'logo_url' => 'https://example.com/logos/ucl.png'
         ],
         [
             'name' => 'FA Cup',
@@ -33,7 +31,6 @@ class CompetitionSeeder extends Seeder
             'country_code' => 'GB',
             'gender' => 'men',
             'age_group' => 'senior',
-            'logo_url' => 'https://example.com/logos/fa-cup.png'
         ],
         [
             'name' => 'International Friendly',
@@ -51,7 +48,6 @@ class CompetitionSeeder extends Seeder
             'country_code' => 'GB',
             'gender' => 'women',
             'age_group' => 'senior',
-            'logo_url' => 'https://example.com/logos/wsl.png'
         ],
         [
             'name' => 'UEFA Youth League',
@@ -60,7 +56,6 @@ class CompetitionSeeder extends Seeder
             'country_code' => null,
             'gender' => 'men',
             'age_group' => 'U20',
-            'logo_url' => 'https://example.com/logos/uyl.png'
         ],
     ];
 

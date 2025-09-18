@@ -13,10 +13,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('player_id')->constrained('players');
             $table->foreignId('football_match_id')->constrained('football_matches');
-            $table->string('played_position', 5);
             $table->foreignId('season_id')->constrained('seasons');
             // Add foreign key explicitly
-            $table->foreign('played_position')->references('id')->on('positions')->onUpdate('cascade')->onDelete('restrict');
+
             $table->boolean('is_goalkeeper')->default(false);
 
             // ========== ATTACKING STATS ==========

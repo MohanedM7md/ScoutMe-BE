@@ -40,6 +40,7 @@ class MatchController extends Controller
         }
         $filters = $request->only([
             'team',
+            'player_id',
             'team_id',
             'competition',
             'competition_id',

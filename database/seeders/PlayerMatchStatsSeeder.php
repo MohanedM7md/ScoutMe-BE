@@ -32,7 +32,6 @@ class PlayerMatchStatsSeeder extends Seeder
                     'season_id' => $match->season_id,
 
                     // Basic info
-                    'played_position' => $player->pivot->played_position,
                     'is_goalkeeper' => $isGoalkeeper,
 
                     // Playing time

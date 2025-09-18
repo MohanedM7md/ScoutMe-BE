@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\RegisterScoutRequest;
 use App\Http\Requests\auth\ScoutUpdateProfileRequest;
-use App\Http\Resources\ScoutResource;
+use App\Http\Resources\users\ScoutResource;
 use App\Http\Resources\ScoutWithTokenResource;
 use App\Http\Resources\UserResource;
 use App\Models\Scout;
@@ -68,7 +68,6 @@ class ScoutController extends Controller
         $validated = $request->validated();
 
         $scout->update($validated);
-
         return response()->json([
             'message' => 'Profile updated successfully',
             'scout' => new ScoutResource($scout->fresh()),
