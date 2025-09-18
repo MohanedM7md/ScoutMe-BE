@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\RegisterScoutRequest;
-use App\Http\Requests\auth\ScoutUpdateProfileRequest;
 use App\Http\Resources\users\ScoutResource;
-use App\Http\Resources\ScoutWithTokenResource;
-use App\Http\Resources\UserResource;
 use App\Models\Scout;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -43,9 +40,6 @@ class ScoutController extends Controller
         ]);
 
         $user->assignRole('scout');
-
-
-        // Create scout profile
         $scout = Scout::create([
             'user_id' => $user->id,
             'name' => $request->name,
