@@ -42,6 +42,8 @@ class MatchController extends Controller
             'team',
             'player_id',
             'team_id',
+            'away_id',
+            'home_id',
             'competition',
             'competition_id',
             'competition_type',
@@ -73,16 +75,18 @@ class MatchController extends Controller
     }
 
 
-    public function getPlayersByTeam(FootballMatch $match, $teamId)
+    public function getPlayersByTeam(Request$request, FootballMatch $match)
     {
+        $teamId = $request->query('team_id');
         $players = $match->getTeamPlayers($teamId);
         return PlayerResource::collection($players);
     }
 
 
-    public function getPlayerStatsById(FootballMatch $match, Player $player)
+    public function getPlayerStatsById(Request $request,FootballMatch $match)
     {
-        $playerStat = $this->playerRepo->getPlayerMatchStats($match, $player);
+        $playerId = $request->query('player_id');
+        $playerStat = $this->playerRepo->getPlayerMatchStats($match, $playerId );
 
         if (!$playerStat) {
             return response()->json([

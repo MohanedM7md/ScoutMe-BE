@@ -12,21 +12,19 @@ class PlayerRepository
 
 
 
-    public function getPlayers( $filters=[], $page,$perPage){
+    public function getPlayers( $filters=[], $page,$perPage=10){
 
-        $players = Player::with('primaryPosition')
-            ->filter($filters)
-            ->orderBy('last_name');
-
+    $players = Player::with('primaryPosition')
+                ->filter($filters);
     if ($perPage > 0) 
         return $players->paginate($perPage, ['*'], 'page', $page);
-    
+
         return $players->get();
 
     }
-    public function getPlayerMatchStats(FootballMatch $match, Player $player){
+    public function getPlayerMatchStats(FootballMatch $match, $playerid){
         $playerStat = $match->playerStats()
-            ->where('player_id', $player->id)
+            ->where('player_id', $playerid)
             ->with( 'position')
             ->first();
         return $playerStat;

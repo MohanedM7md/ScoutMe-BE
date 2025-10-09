@@ -21,9 +21,11 @@ class UpdatePlayerRequest extends FormRequest
             'birth_date'          => 'sometimes|date|before:-16 years',
             'height_cm'           => 'sometimes|integer|between:150,220',
             'weight_kg'           => 'sometimes|integer|between:40,100',
+            'player_nationality'  => 'required|string|size:2',
             'primary_position'    => ['sometimes', Rule::exists('positions', 'id')],
             'player_image'        => 'sometimes|nullable|url|max:255',
             'is_profile_complete' => 'sometimes|boolean',
+            'team_id'             => 'required|integer',
         ];
     }
 }

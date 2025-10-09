@@ -93,7 +93,22 @@ public function getTeamPlayers(int $teamId)
             $teamId = $filters['team_id'];
             $query->where(function ($q) use ($teamId) {
                 $q->where('home_team_id', $teamId)
-                  ->orWhere('away_team_id', $teamId);
+                ->orWhere('away_team_id', $teamId);
+            });
+        }
+
+
+        if (!empty($filters['away_id'])) {
+            $teamId = $filters['away_id'];
+            $query->where(function ($q) use ($teamId) {
+                $q->Where('away_team_id', $teamId);
+            });
+        }
+
+        if (!empty($filters['home_id'])) {
+            $teamId = $filters['home_id'];
+            $query->where(function ($q) use ($teamId) {
+                $q->where('home_team_id', $teamId);
             });
         }
         if (!empty($filters['player_id'])) {

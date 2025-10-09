@@ -14,10 +14,6 @@ class SeasonResource extends JsonResource
             'start_date'  => $this->start_date->toDateString(),
             'end_date'    => $this->end_date->toDateString(),
             'is_current'  => $this->is_current,
-            'competitions' => $this->whenLoaded('competitions'),
-            'matches'     => $this->whenLoaded('footballMatches'),
-            'created_at'  => $this->created_at,
-            'updated_at'  => $this->updated_at,
         ];
     }
 }

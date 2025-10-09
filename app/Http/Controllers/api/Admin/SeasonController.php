@@ -15,12 +15,9 @@ class SeasonController extends Controller
     public function index(Request $request)
     {
         $query = Season::query();
-
-
         if ($request->boolean('current')) {
             $query->where('is_current', true);
         }
-
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }

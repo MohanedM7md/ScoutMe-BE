@@ -4,7 +4,6 @@ namespace App\Repositories;
 use App\Models\Club;
 use App\Models\FootballMatch;
 use App\Models\MatchTeamStats;
-use Illuminate\Support\Facades\Schema;
 
 class MatchsRepository
 {

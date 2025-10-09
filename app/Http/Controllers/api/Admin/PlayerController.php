@@ -25,38 +25,20 @@ class playerController extends Controller
     {
         $player = Player::create($request->validated());
 
-        return new PlayerResource(
-            $player->load([
-                'nationalityCountry',
-                'secondNationalityCountry',
-                'primaryPosition'
-            ])
-        );
+        return new PlayerResource($player);
     }
 
 
     public function show(Player $player)
     {
-        return new PlayerResource(
-            $player->load([
-                'primaryPosition',
-                'matchStats.match',
-                'aggregatedStats'
-            ])
-        );
+        return new PlayerResource($player);
     }
 
     public function update(UpdatePlayerRequest $request, Player $player)
     {
         $player->update($request->validated());
 
-        return new PlayerResource(
-            $player->fresh([
-                'nationalityCountry',
-                'secondNationalityCountry',
-                'primaryPosition'
-            ])
-        );
+        return new PlayerResource($player);
     }
 
     public function destroy(Player $player)

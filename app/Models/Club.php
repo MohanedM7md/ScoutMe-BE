@@ -67,7 +67,8 @@ class Club extends Model
     }
     public function scopeByCompetition($query, $competitionId)
     {
-        return $query->whereHas('competitions', fn($q)=>$q->where('competition_id', $competitionId));
+        $result = $query->whereHas('competitions', fn($q)=>$q->where('competition_id', $competitionId))->get();
+        return $result ;
     }
 
     public function scopeByCountry($query, $countryCode)
@@ -79,4 +80,14 @@ class Club extends Model
     {
         return $query->where('id', $teamId);
     }
+
+    public function scopeByName($query, $name)
+    {
+        if(!empty($name))
+        return $query->where(function ($q) use ($name) {
+            $q->where('name', 'LIKE', "%{$name}%")
+            ->orWhere('short_name', 'LIKE', "%{$name}%");
+        });
+    }
 }
+

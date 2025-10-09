@@ -70,29 +70,23 @@ class Competition extends Model
     }
     public function scopeFilter($query, array $filters)
     {
-        // Filter by country_code
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
+        }
         if (!empty($filters['country_code'])) {
             $query->where('country_code', $filters['country_code']);
         }
 
-        // Filter by type (league, friendly, tournament)
         if (!empty($filters['type'])) {
             $query->where('type', $filters['type']);
         }
 
-        // Filter by gender (men, women)
         if (!empty($filters['gender'])) {
             $query->where('gender', $filters['gender']);
         }
 
-        // Filter by age_group (e.g., U21)
         if (!empty($filters['age_group'])) {
             $query->where('age_group', $filters['age_group']);
-        }
-
-        // Filter by competition name (search / like)
-        if (!empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
         }
 
         return $query;

@@ -14,7 +14,6 @@ class Player extends Model
     use HasFactory, Searchable;
 
     protected $fillable = [
-        'team_id',
         'first_name',
         'last_name',
         'display_name',
@@ -24,6 +23,7 @@ class Player extends Model
         'weight_kg',
         'primary_position',
         'player_image',
+        'team_id',
     ];
 
     protected $casts = [
@@ -68,14 +68,11 @@ class Player extends Model
         if (!empty($filters['position'])) {
             $query->where('primary_position', $filters['position']);
         }
-
         if (!empty($filters['name'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('first_name', 'like', '%' . $filters['name'] . '%')
-                    ->orWhere('last_name', 'like', '%' . $filters['name'] . '%')
-                    ->orWhere('display_name', 'like', '%' . $filters['name'] . '%');
-            });
-        }
+            $query->where('first_name', 'LIKE', "%{$filters['name']}%")
+                    ->orWhere('last_name', 'LIKE', "%{$filters['name']}%")
+                    ->orWhere('display_name', 'LIKE', "%{$filters['name']}%");
+            }
         if (!empty($filters['nationality'])) {
             $query->where('player_nationality', $filters['nationality']);
         }
@@ -83,7 +80,5 @@ class Player extends Model
         if(!empty($filters['team_id'])){
             $query->where('team_id', $filters['team_id']);
         }
-
-        
     }
 }

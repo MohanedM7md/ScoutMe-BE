@@ -5,27 +5,24 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Competition;
 use App\Http\Resources\competition\CompetitionResource;
+use App\Repositories\CompetitonsRepository;
 use Illuminate\Http\Request;
 
 class CompetitionController extends Controller
 {
+    protected $repo;
+    public function __construct(CompetitonsRepository $repo){
+        $this->repo = $repo;
+    }
     public function index(Request $request)
     {
-        $query = Competition::query();
-
-        // Eager load with match count
-        $query->withCount('footballMatches');
-        // Apply all filters
-        $filters = $request->only(['country_code', 'type', 'gender', 'age_group', 'name']);
-        $query->filter($filters);
-        // Sorting
+        $filters = $request->only(
+            ['country_code', 'type', 'gender', 'age_group', 'name']
+        );
         $sortField = $request->input('sort', 'name');
         $sortDirection = $request->input('direction', 'asc');
-        $query->orderBy($sortField, $sortDirection);
-
-        // Pagination
-        $competitions = $query->paginate($request->input('per_page', 15));
-
+        $perPage = $request->input('per_page',10);
+        $competitions = $this->repo->getCompetitions($filters,$sortField, $sortDirection,$perPage );
         return CompetitionResource::collection($competitions);
     }
 

@@ -11,16 +11,26 @@ class CompetitionClubSeeder extends Seeder
     public function run()
     {
         $competitions = Competition::all();
-        $clubs = Club::all();
+        $clubs = Club::all()->shuffle(); // shuffle once globally
 
         if ($competitions->isEmpty() || $clubs->isEmpty()) {
             $this->command->info('Please seed competitions and clubs first.');
             return;
         }
 
-        foreach ($competitions as $competition) {
-            // Attach the first 2 clubs to each competition
-            $competition->clubs()->syncWithoutDetaching($clubs->take(2)->pluck('id')->toArray());
+        // Split clubs into groups (one group per competition)
+        $chunks = $clubs->chunk(
+            ceil($clubs->count() / $competitions->count())
+        );
+
+        foreach ($competitions as $index => $competition) {
+            if (isset($chunks[$index])) {
+                $competition->clubs()->syncWithoutDetaching(
+                    $chunks[$index]->pluck('id')->toArray()
+                );
+            }
         }
+
+        $this->command->info('Competitions linked with unique random clubs successfully!');
     }
 }

@@ -7,9 +7,19 @@ use App\Http\Requests\Competitions\StoreCompetitionRequest;
 use App\Http\Requests\Competitions\UpdateCompetitionRequest;
 use App\Http\Resources\competition\CompetitionResource;
 use App\Models\Competition;
+use Illuminate\Http\Request;
 
 class CompetitionController extends Controller
 {
+
+    public function index(Request $request){
+        $name = $request->query('name');
+        $perPage = $request->input('per_page',4 );
+        $competition = Competition::where('name', 'LIKE', "%{$name}%")
+                                    ->orWhere('short_name', 'LIKE', "%{$name}%")
+                                    ->paginate($perPage);
+        return response()->json($competition);
+    }
     public function store(StoreCompetitionRequest $request)
     {
         $competition = Competition::create($request->validated());

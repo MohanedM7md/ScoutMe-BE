@@ -20,7 +20,7 @@ class PlayerController extends Controller
     }
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 0);
+        $perPage = $request->input('per_page', 10);
         $page    = $request->input('page', 1);
         $filters = $request->only(['team_id', 'nationality','name','position']);
         $players = $this->repo->getPlayers($filters, $page,$perPage);
@@ -42,9 +42,8 @@ class PlayerController extends Controller
     public function search(SearchPlayerRequest $request)
     {
         $results = Player::search($request->query('query'))
-            ->query(fn($builder) => $builder->with(['primaryPosition', 'nationalityCountry']))
+            ->query(fn($builder) => $builder->with(['primaryPosition', 'nationality']))
             ->paginate($request->input('per_page', 10));
-
         return response()->json([
             'results'     => PlayerResource::collection($results),
             'suggestions' => $this->getSearchSuggestions($request->input('query')),

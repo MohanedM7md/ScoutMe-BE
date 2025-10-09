@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateTeamStatsRequest;
-use App\Http\Requests\Players\UpdatePlayerStatsRequest;
-use App\Http\Requests\Players\UpdateGoalkeeperStatsRequest;
+use App\Http\Requests\Teams\TeamStatsRequest;
+use App\Http\Requests\Players\PlayerStatsRequest;
 use App\Models\FootballMatch;
 use App\Models\MatchTeamStats;
 use App\Models\PlayerMatchStats;
@@ -16,7 +15,7 @@ use Illuminate\Http\Response;
 class StatsController extends Controller
 {
 
-    public function storeTeamStats(UpdateTeamStatsRequest $request)
+    public function storeTeamStats(TeamStatsRequest $request)
     {
         $exists = MatchTeamStats::where('football_match_id', $request->match_id)
             ->where('club_id', $request->club_id)
@@ -37,7 +36,7 @@ class StatsController extends Controller
     }
 
 
-    public function updateTeamStats(UpdateTeamStatsRequest $request, FootballMatch $match, int $clubId)
+    public function updateTeamStats(TeamStatsRequest $request, FootballMatch $match, int $clubId)
     {
         $stats = MatchTeamStats::where('football_match_id', $match->id)
             ->where('club_id', $clubId)
@@ -52,7 +51,7 @@ class StatsController extends Controller
     }
 
 
-    public function storePlayerStats(UpdatePlayerStatsRequest $request)
+    public function storePlayerStats(PlayerStatsRequest $request)
     {
         $exists = PlayerMatchStats::where('football_match_id', $request->football_match_id)
             ->where('player_id', $request->player_id)
@@ -71,7 +70,7 @@ class StatsController extends Controller
             ->where('category', 'GK')
             ->exists();
 
-        if ($isGoalkeeper && $request instanceof UpdateGoalkeeperStatsRequest) {
+        if ($isGoalkeeper) {
             $this->updateGoalkeeperStats($playerStat->id, $request->validated());
         }
 
@@ -81,7 +80,7 @@ class StatsController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function updatePlayerStats(UpdatePlayerStatsRequest $request, FootballMatch $match, int $playerId)
+    public function updatePlayerStats(PlayerStatsRequest $request, FootballMatch $match, int $playerId)
     {
         $playerStat = PlayerMatchStats::where('football_match_id', $match->id)
             ->where('player_id', $playerId)
@@ -94,7 +93,7 @@ class StatsController extends Controller
             ->where('category', 'GK')
             ->exists();
 
-        if ($isGoalkeeper && $request instanceof UpdateGoalkeeperStatsRequest) {
+        if ($isGoalkeeper) {
             $this->updateGoalkeeperStats($playerStat->id, $request->validated());
         }
 
