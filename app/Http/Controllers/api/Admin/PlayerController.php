@@ -8,7 +8,7 @@ use App\Http\Requests\Players\UpdatePlayerRequest;
 use App\Http\Resources\players\PlayerResource;
 use App\Models\Player;
 
-class playerController extends Controller
+class PlayerController extends Controller
 {
 
     public function index()
