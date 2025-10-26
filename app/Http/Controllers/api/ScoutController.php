@@ -10,6 +10,9 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Players\AddJuniorPlayerRequest;
+use App\Models\JuniorPlayer;
+use App\Http\Resources\JuniorPlayerResource;
 
 class ScoutController extends Controller
 {
@@ -67,4 +70,32 @@ class ScoutController extends Controller
             'scout' => new ScoutResource($scout->fresh()),
         ]);
     }
+
+
+
+    public function addJunior(AddJuniorPlayerRequest $request)
+    {
+
+        $user = $request->user();
+
+        $player = JuniorPlayer::create([
+            'first_name'      => $request->first_name,
+            'last_name'       => $request->last_name,
+            'display_name'    => $request->display_name,
+            'birth_date'      => $request->birth_date,
+            'nationality_id'  => $request->nationality_id,
+            'height_cm'       => $request->height_cm,
+            'weight_kg'       => $request->weight_kg,
+            'primary_position' => $request->primary_position,
+            'preferred_foot'  => $request->preferred_foot,
+            'player_image'    => $request->player_image,
+            'video_url'       => $request->video_url,
+            'is_scout'        => true,
+            'scout_email'     => $user->email,
+        ]);
+        return response()->json([
+            'player' =>  $player,
+        ], 201);
+    }
+
 }
