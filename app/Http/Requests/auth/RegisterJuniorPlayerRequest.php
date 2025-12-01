@@ -16,23 +16,33 @@ class RegisterJuniorPlayerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'       => 'required|string|max:100',
-            'last_name'        => 'required|string|max:100',
-            'email'    => 'required|email|max:255|unique:users,email',
-            'password' => [
-                'required',
-                Password::defaults()
-            ],
-            'display_name'     => 'nullable|string|max:100',
-            'phone' => 'required|regex:/^\+[1-9]\d{1,14}$/',
-            'birth_date'       => 'required|date',
-            'nationality_id'   => 'required|exists:countries,id',
-            'height_cm'        => 'required|integer|min:100|max:240',
-            'weight_kg'        => 'required|integer|min:30|max:140',
-            'primary_position' => ['required', Rule::exists('positions', 'id')],
-            'preferred_foot'   => 'required|in:left,right,both',
-            'player_image'     => 'nullable|url',
-            'video_url'        => 'nullable|url',
+            'first_name'        => 'required|string|max:100',
+            'last_name'         => 'required|string|max:100',
+            'email'             => 'required|email|max:255|unique:users,email',
+            'password'          => ['required', Password::defaults()],
+            'display_name'      => 'nullable|string|max:100',
+            'phone'             => 'required|regex:/^\+[1-9]\d{1,14}$/',
+            'birth_date'        => 'required|date',
+            'nationality_id'    => 'required|exists:countries,id',
+            'height_cm'         => 'required|integer|min:100|max:240',
+            'weight_kg'         => 'required|integer|min:30|max:140',
+            'primary_position'  => ['required', Rule::exists('positions', 'id')],
+            
+            // ✅ Updated: fav_feet is an array of allowed values
+            'fav_feet'          => 'required|array|min:1',
+            'fav_feet.*'        => 'in:left,right,both',
+
+            // Optional
+            'positions'         => 'nullable|array',
+            'positions.*'       => Rule::exists('positions', 'id'),
+
+            'player_image'      => 'nullable|url',
+            'video_urls'        => 'nullable|array',
+            'video_urls.*'      => 'url',
+
+            'current_club'      => 'nullable|string|max:255',
+            'previous_clubs_info' => 'nullable|string',
+            'description'       => 'nullable|string',
         ];
     }
 }

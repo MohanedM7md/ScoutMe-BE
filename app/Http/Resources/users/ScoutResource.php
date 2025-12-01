@@ -10,11 +10,14 @@ class ScoutResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'email'            => $this->user->email,
-            'user_id'          => $this->user_id,
-            'phone_number'     => $this->user->phone_number,
-            'logo_url'         => $this->logo_url,
-            'notes'            => $this->notes,
+            'id'                => $this->user->id,
+            'name'              => $this->user->name,
+            'email'             => $this->user->email,
+            'imageUrl;'         => $this->logo_url,
+            'phoneNumber;'      => $this->user->phone_number,
+            'notes'             => $this->notes,
+            'type'              => $this->user_role,
+            'is_verified'       => $this->is_verified,
         ];
     }
 }

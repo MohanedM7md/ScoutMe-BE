@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
         Season::truncate();
         FootballMatch::truncate();
         PlayerMatchStats::truncate();
+        JuniorPlayer::truncate();
         // Truncate attacker, defender, and goal keeper stats tables
 
 
@@ -66,6 +67,7 @@ class DatabaseSeeder extends Seeder
             MatchTeamStatsSeeder::class,
             FootballMatchPlayerSeeder::class,
             PlayerMatchStatsSeeder::class,
+            JuniorPlayerSeeder::class,
         ]);
     }
 }

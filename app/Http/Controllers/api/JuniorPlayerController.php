@@ -14,39 +14,49 @@ use Illuminate\Http\Request;
 class JuniorPlayerController extends Controller
 {
 
-    public function register(RegisterJuniorPlayerRequest $request)
-    {
+   public function register(RegisterJuniorPlayerRequest $request)
+{
+    // 1️⃣ Create the user
+    $user = User::create([
+        'email'        => $request->email,
+        'password'     => Hash::make($request->password),
+        'phone_number' => $request->phone,
+        'user_role'    => 'player',
+    ]);
 
-        $user = User::create([
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'phone_number' => $request->phone,
-            'user_role' => 'player',
-        ]);
-        $user->assignRole('player');
+    $user->assignRole('player');
 
-        $player = JuniorPlayer::create([
-            'user_id'         => $user->id,
-            'first_name'      => $request->first_name,
-            'last_name'       => $request->last_name,
-            'display_name'    => $request->display_name,
-            'birth_date'      => $request->birth_date,
-            'nationality_id'  => $request->nationality_id,
-            'height_cm'       => $request->height_cm,
-            'weight_kg'       => $request->weight_kg,
-            'primary_position' => $request->primary_position,
-            'preferred_foot'  => $request->preferred_foot,
-            'player_image'    => $request->player_image,
-            'video_url'       => $request->video_url,
-        ]);
+    // 2️⃣ Create the JuniorPlayer profile
+    $player = JuniorPlayer::create([
+        'user_id'         => $user->id,
+        'first_name'      => $request->first_name,
+        'last_name'       => $request->last_name,
+        'display_name'    => $request->display_name,
+        'birth_date'      => $request->birth_date,
+        'nationality_id'  => $request->nationality_id,
+        'height_cm'       => $request->height_cm,
+        'weight_kg'       => $request->weight_kg,
+        'primary_position'=> $request->primary_position,
+        'positions'       => $request->positions ?? [$request->primary_position],
+        'video_urls'      => $request->video_urls ?? [],
+        'fav_feet'        => $request->fav_feet ?? [],
+        'player_image'    => $request->player_image,
+        'current_club'    => $request->current_club,
+        'previous_clubs_info' => $request->previous_clubs_info,
+        'description'     => $request->description,
+        'is_profile_complete' => true,
+    ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+    // 3️⃣ Generate API token
+    $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'token'  => $token,
-            'player' => new JuniorPlayerResource($player->load('user')),
-        ], 201);
-    }
+    // 4️⃣ Return JSON resource
+    return response()->json([
+        'token'  => $token,
+        'player' => new JuniorPlayerResource($player->load('user')),
+    ], 201);
+}
+
 
     public function fetchProfile(Request $request)
     {
@@ -59,9 +69,7 @@ class JuniorPlayerController extends Controller
             ], 404);
         }
 
-        return response()->json(
-            $player
-        );
+        return new JuniorPlayerResource($player);
     }
     public function updateProfile(UpdateJuniorPlayerRequest $request)
     {
@@ -79,7 +87,23 @@ class JuniorPlayerController extends Controller
             'player' => $player
         ]);
     }
+    public function getAllPlayers()
+    {
+        $players = JuniorPlayer::with('user')->get();
 
+        return JuniorPlayerResource::collection($players);
+    }
+
+    public function getPlayer($id)
+{
+    $player = JuniorPlayer::with('user')->find($id);
+
+    if (!$player) {
+        return response()->json(['message' => 'Player not found'], 404);
+    }
+
+    return new JuniorPlayerResource($player);
+}
     public function deleteProfile(Request $request)
     {
         $user = $request->user();               // authenticated user
