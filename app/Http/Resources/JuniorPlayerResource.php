@@ -12,7 +12,7 @@ class JuniorPlayerResource extends JsonResource
         return [
             'id'                => (string) $this->id,
 
-            'name'              => trim($this->first_name . ' ' . $this->last_name),
+            'name'              => $this->first_name . ' ' . $this->last_name,
 
             'age'               => $this->birth_date
                                    ? Carbon::parse($this->birth_date)->age

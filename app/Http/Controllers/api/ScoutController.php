@@ -19,24 +19,14 @@ class ScoutController extends Controller
 public function fetchProfile(Request $request)
 {
     $user = $request->user();
+        $scout = $user->scout;
 
-    // Log the authenticated user
-    Log::info('Authenticated user:', ['id' => $user->id, 'email' => $user->email]);
+        if (!$scout) {
+            return response()->json([
+                'message' => 'Scout profile not found'
+            ], 404);
+        }
 
-    $scout = $user->scout; // or $user->juniorPlayer if it's a player
-
-    // Log the related scout/player
-    if ($scout) {
-        Log::info('Related profile found:', ['profile' => $scout->toArray()]);
-    } else {
-        Log::warning('No related profile found for user', ['user_id' => $user->id]);
-    }
-
-    if (!$scout) {
-        return response()->json([
-            'message' => 'Player profile not found'
-        ], 404);
-    }
 
     return new ScoutResource($scout);
 }

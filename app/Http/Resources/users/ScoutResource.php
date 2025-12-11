@@ -11,12 +11,12 @@ class ScoutResource extends JsonResource
     {
         return [
             'id'                => $this->user->id,
-            'name'              => $this->user->name,
+            'name'              => $this->name,
+            'location'          => null,
             'email'             => $this->user->email,
             'imageUrl;'         => $this->logo_url,
             'phoneNumber;'      => $this->user->phone_number,
             'notes'             => $this->notes,
-            'type'              => $this->user_role,
             'is_verified'       => $this->is_verified,
         ];
     }

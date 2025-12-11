@@ -26,7 +26,6 @@ class JuniorPlayerController extends Controller
 
     $user->assignRole('player');
 
-    // 2️⃣ Create the JuniorPlayer profile
     $player = JuniorPlayer::create([
         'user_id'         => $user->id,
         'first_name'      => $request->first_name,
@@ -47,10 +46,8 @@ class JuniorPlayerController extends Controller
         'is_profile_complete' => true,
     ]);
 
-    // 3️⃣ Generate API token
     $token = $user->createToken('auth_token')->plainTextToken;
 
-    // 4️⃣ Return JSON resource
     return response()->json([
         'token'  => $token,
         'player' => new JuniorPlayerResource($player->load('user')),
@@ -74,19 +71,22 @@ class JuniorPlayerController extends Controller
     public function updateProfile(UpdateJuniorPlayerRequest $request)
     {
         $user = $request->user();
-        $player = $user->JuniorPlayer;
+        $player = $user->juniorPlayer;  // fixed case
+
         if (!$player) {
             return response()->json([
                 'message' => 'Player profile not found'
             ], 404);
         }
+
         $player->update($request->validated());
 
         return response()->json([
             'message' => 'Player profile updated successfully',
-            'player' => $player
+            'player' => new JuniorPlayerResource($player->load('user'))
         ]);
     }
+
     public function getAllPlayers()
     {
         $players = JuniorPlayer::with('user')->get();
