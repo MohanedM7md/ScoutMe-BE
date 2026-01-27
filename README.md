@@ -162,20 +162,15 @@ Before you begin, ensure you have the following installed:
    php artisan db:seed
    ```
 
-8. **Generate application key**
-   ```bash
-   php artisan key:generate
-   ```
-
-9. **Create storage symlink**
+8. **Create storage symlink**
    ```bash
    php artisan storage:link
    ```
 
-10. **Start the development server**
-    ```bash
-    php artisan serve
-    ```
+9. **Start the development server**
+   ```bash
+   php artisan serve
+   ```
 
 The API will be available at `http://localhost:8000`
 
