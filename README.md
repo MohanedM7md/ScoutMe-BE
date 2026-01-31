@@ -251,6 +251,16 @@ The API uses Laravel Sanctum for authentication. Include the bearer token in the
 ```http
 Authorization: Bearer your-token-here
 ```
+### 📘 Postman API Documentation
+
+The full, interactive API documentation is available via Postman and includes:
+- All endpoints with request/response examples
+- Authentication setup
+- Query parameters and filters
+- Error responses
+
+🔗 **Postman Documentation:**  
+https://documenter.getpostman.com/view/41344496/2sB3BKFofM
 
 ### API Endpoints Overview
 
